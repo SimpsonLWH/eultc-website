@@ -76,7 +76,7 @@ Every ticket is independently mergeable and must leave the app deployable.
 **How to test:** npm run dev; visit / and each nav route at 375px and at desktop width; check the active nav state; confirm there are no console errors.
 
 ### T02 - Data model and database setup
-- Status: In progress
+- Status: Done
 - Owner: Lewis
 - Type: chore
 - Size: M
