@@ -11,6 +11,12 @@ Two developers (Lewis and Daniel) work on this repo in parallel. The ticket boar
 5. Open a PR into main. The title starts with the ticket id. Description: what changed, how to test, screenshots for UI.
 6. The other dev reviews, then squash-merges into main and deletes the branch. Set the ticket to Done in the same PR.
 
+## Issues and branches
+
+- Work from a GitHub issue. TASKS.md maps every V1 ticket to its issue; proposed planning issues are clearly marked and are not approved build work.
+- Branch from main using the ticket id: `feat/<ticket-id>-<short-slug>` (or `fix/`, `chore/`, `docs/`).
+- Reference the issue in the PR body ("Refs #12"). Use a closing reference ("Closes #12") only when the issue's acceptance criteria are met and the work is merged.
+
 ## Avoiding collisions
 
 - Each ticket lists the files and folders it will create or edit in Touches. If two open tickets share a path, decide the order before starting both at once.
