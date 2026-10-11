@@ -38,6 +38,21 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 
 Every ticket is independently mergeable and must leave the app deployable. Each issue links to its dependencies by issue URL; implementers should also read the ticket's Collision warning where one is present.
 
+## Milestones
+
+Work issues in milestone order; an issue is ready when everything it depends on is closed. Live view: https://github.com/SimpsonLWH/eultc-website/milestones. M5-M8 are proposed planning only, not approved scope.
+
+| Milestone | Delivers | Issues |
+|-----------|----------|--------|
+| M1 - Foundations | App shell and design tokens, data layer, auth and roles, deploy/CI, tooling cleanups | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) T01, [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) T02 (done), [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) T03, [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) T11, [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) T12 |
+| M2 - V1 BUCS: core | Fixtures and admin forms, the availability form, the response tracker | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) T04, [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) T05, [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) T06 |
+| M3 - V1 BUCS: selection | Selection engine, live team sheet, rankings and admin editor | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) T07, [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) T08, [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) T09 |
+| M4 - V1 BUCS: beta | Dashboard, real seed data, captain QA pass, launch checklist | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) T10, [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) T13 |
+| M5 - Club members: phase 1 (proposed) | Match results, stats and leaderboards, reminders, training sign-ups | [#17](https://github.com/SimpsonLWH/eultc-website/issues/17), [#18](https://github.com/SimpsonLWH/eultc-website/issues/18), [#19](https://github.com/SimpsonLWH/eultc-website/issues/19), [#22](https://github.com/SimpsonLWH/eultc-website/issues/22) |
+| M6 - Club members: phase 2 (proposed) | Membership/payment checks, travel reimbursements | [#20](https://github.com/SimpsonLWH/eultc-website/issues/20), [#21](https://github.com/SimpsonLWH/eultc-website/issues/21) |
+| M7 - Club hub (proposed) | News and notifications, calendars, polls | [#23](https://github.com/SimpsonLWH/eultc-website/issues/23), [#24](https://github.com/SimpsonLWH/eultc-website/issues/24), [#25](https://github.com/SimpsonLWH/eultc-website/issues/25) |
+| M8 - Future: LTA box league (proposed) | LTA box-league integration feasibility check | [#26](https://github.com/SimpsonLWH/eultc-website/issues/26) |
+
 ## Tickets
 
 ### T01 - App shell, layout and design tokens

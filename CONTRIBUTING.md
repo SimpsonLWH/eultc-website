@@ -13,6 +13,8 @@ Two developers (Lewis and Daniel) work on this repo in parallel. The ticket boar
 
 ## Issues and branches
 
+- Pick issues from the earliest open milestone (see the Milestones table in TASKS.md).
+- Check the issue's "Depends on" links before branching; start only when the prerequisites are closed.
 - Work from a GitHub issue. TASKS.md maps every V1 ticket to its issue; proposed planning issues are clearly marked and are not approved build work.
 - Branch from main using the ticket id: `feat/<ticket-id>-<short-slug>` (or `fix/`, `chore/`, `docs/`).
 - Reference the issue in the PR body ("Refs #12"). Use a closing reference ("Closes #12") only when the issue's acceptance criteria are met and the work is merged.
