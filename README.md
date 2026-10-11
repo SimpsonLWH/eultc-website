@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Local development
+
+```bash
+npm install
+cp .env.example .env.local   # add your MongoDB connection string
+npm run db:seed              # 36 players, 2 admins, 3 fixtures (safe to re-run)
+npm run dev
+```
+
+- The database is MongoDB via Mongoose. Use a MongoDB Atlas free cluster for shared data; any local mongod connection string also works. No Docker required.
+- `MONGODB_URI` is read from `.env.local`, which is never committed.
+- JSON API: `/api/health`, `/api/fixtures?scope=upcoming|past|all`, `/api/fixtures/[fixtureId]`, `/api/rankings`.
+
 ## Getting Started
 
 First, run the development server:

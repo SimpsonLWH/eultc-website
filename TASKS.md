@@ -81,13 +81,13 @@ Every ticket is independently mergeable and must leave the app deployable.
 - Type: chore
 - Size: M
 - Depends on: none
-- Touches: lib/db/, lib/db/models/, scripts/seed.ts, .env.example, package.json, README.md
+- Touches: lib/db/, lib/db/models/, app/api/, scripts/seed.ts, .env.example, package.json, README.md
 - Suggested owner: Lewis
 
 **Why:** Availability, selection and the team sheet all read the same collections. One schema now stops parallel tickets from inventing their own shapes halfway through the track.
 
 **Scope:**
-- Stack (decided): MongoDB with Mongoose. Local development runs MongoDB in Docker; production uses a managed MongoDB Atlas cluster, with the connection string added to env when the deploy ticket lands. Record the Atlas database name in the PR.
+- Stack (decided): MongoDB with Mongoose (8.x while the dev machines run Node 20.12; revisit with T12). Development uses any MongoDB connection string - a MongoDB Atlas free cluster or a local mongod. No Docker requirement. Production uses a managed Atlas cluster; record the Atlas database name in the PR.
 - Collections (camelCase fields, ObjectId refs, timestamps):
   - players: name, email (unique, lowercased), rankingPosition (integer, unique), isActive (default true).
   - user_roles: email to role mapping (player or admin), plus an optional auth provider user id for T03. Seeded admin flags are fine.
@@ -95,9 +95,10 @@ Every ticket is independently mergeable and must leave the app deployable.
   - availability_responses: playerId, fixtureId, status (available or unavailable), note (nullable). Unique index on (playerId, fixtureId).
   - team_selections: fixtureId, teamNumber, seedPosition, playerId. Unique index on (fixtureId, teamNumber, seedPosition). This collection exists for the published-sheet split; the V1 live team sheet renders computed teams and does not write to it.
 - No SQL migrations: Mongoose declares the schemas and the seed script syncs indexes (syncIndexes). Response rule used everywhere: a fixture accepts availability while status is "open" and now is before availabilityDeadline.
+- Next.js route handlers under app/api are the API surface for the UI: /api/health, /api/fixtures, /api/fixtures/[fixtureId] and /api/rankings return JSON and call lib/db only. Later tickets add their own routes in the same shape rather than querying the database from components.
 - Seed script: 36 fake players with realistic names ranked 1-36, 2 admin roles (Lewis and Daniel placeholder emails), 3 fixtures (one home, one away, one in the past) with deadlines and 4/3/2 teams. Seed must be safe to re-run.
 - Typed data-access layer in lib/db: models behind a thin module per collection with the queries later tickets need (listFixtures, getFixture, upsertAvailability, listRankings and so on). Pages never touch the Mongoose connection directly.
-- .env.example listing every variable (MONGODB_URI, plus auth variables as they land). README "Local development" section: start local MongoDB with Docker, run the seed.
+- .env.example listing every variable (MONGODB_URI, plus auth variables as they land). README "Local development" section: point MONGODB_URI at your database, run the seed.
 - npm script: db:seed (tsx plus the env loader used by the script).
 
 **Out of scope:** UI of any kind; auth flows (T03); writing to team_selections; real club data (T13).
@@ -107,9 +108,10 @@ Every ticket is independently mergeable and must leave the app deployable.
 - [ ] Unique indexes exist on players.email, players.rankingPosition and availability_responses(playerId, fixtureId).
 - [ ] Re-running the seed does not duplicate rows.
 - [ ] lib/db exports typed helpers; no page imports Mongoose or the connection directly.
+- [ ] The API routes return JSON from the seeded database: /api/health, /api/fixtures, /api/fixtures/[fixtureId] and /api/rankings.
 - [ ] .env.example lists every required variable and the README explains setup in under 15 lines.
 
-**How to test:** start MongoDB with Docker, copy .env.example to .env.local, run the seed twice, then query players and fixtures to confirm 36/3 rows and no duplicates.
+**How to test:** set MONGODB_URI in .env.local (Atlas free tier or any local mongod), run npm run db:seed twice, confirm 36 players, 3 fixtures and 2 admins with no duplicates, then curl the API routes.
 
 ### T03 - Authentication and roles
 - Status: Todo
