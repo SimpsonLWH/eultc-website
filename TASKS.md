@@ -20,23 +20,23 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 
 ## Summary
 
-| ID | Title | Size | Depends on | Suggested owner |
-|----|-------|------|------------|-----------------|
-| T01 | App shell, layout and design tokens | S | none | Lewis |
-| T02 | Data model and database setup | M | none | Lewis |
-| T03 | Authentication and roles | M | T01, T02 | Daniel |
-| T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis |
-| T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis |
-| T06 | Response tracker (admin) | S | T05 | Daniel |
-| T07 | Ranked selection engine | M | T02 | Daniel |
-| T08 | Live team sheet | M | T05, T07 | Lewis |
-| T09 | Rankings page and admin ranking editor | M | T01, T02, T03 | Daniel |
-| T10 | Home dashboard and logged-out view | S | T04, T09 | Lewis |
-| T11 | Deployment and CI | S | T01 | either |
-| T12 | Tooling cleanups and Node version | S | none | either |
-| T13 | Seed real data, QA pass and beta launch checklist | S | T04-T12 | both (joint) |
+| ID | Title | Size | Depends on | Suggested owner | Issue |
+|----|-------|------|------------|-----------------|-------|
+| T01 | App shell, layout and design tokens | S | none | Lewis | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) |
+| T02 | Data model and database setup | M | none | Lewis | [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) (done, closed) |
+| T03 | Authentication and roles | M | T01, T02 | Daniel | [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) |
+| T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) |
+| T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis | [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) |
+| T06 | Response tracker (admin) | S | T05 | Daniel | [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) |
+| T07 | Ranked selection engine | M | T02 | Daniel | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) |
+| T08 | Live team sheet | M | T05, T07 | Lewis | [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) |
+| T09 | Rankings page and admin ranking editor | M | T01, T02, T03 | Daniel | [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) |
+| T10 | Home dashboard and logged-out view | S | T04, T09 | Lewis | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) |
+| T11 | Deployment and CI | S | T01 | either | [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) |
+| T12 | Tooling cleanups and Node version | S | none | either | [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) |
+| T13 | Seed real data, QA pass and beta launch checklist | S | T04-T12 | both (joint) | [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) |
 
-Every ticket is independently mergeable and must leave the app deployable.
+Every ticket is independently mergeable and must leave the app deployable. Each issue links to its dependencies by issue URL; implementers should also read the ticket's Collision warning where one is present.
 
 ## Tickets
 
@@ -471,3 +471,20 @@ Sync points:
 Two tickets collide on package.json (T07 adds the test script and Vitest; T12 may add engines). Land T07 first, then T12.
 
 Dependency check: the graph is acyclic. Edges run T01/T02 -> T03, T04, T07, T11; T03/T04 -> T05; T03 -> T09; T05 -> T06; T05/T07 -> T08; T04/T09 -> T10; everything -> T13. No cycles, and at least three tickets (T03, T04, T07) are startable immediately after T01 and T02, split across both devs.
+
+## Future planning issues (V2/backlog - proposed)
+
+These are proposed work for later review, not approved V1 scope, not a delivery commitment, and not permission to start building. They are deliberately separate from the V1 execution tickets above. Proposal context: [docs/project-proposal.md](docs/project-proposal.md).
+
+| Issue | Capability |
+|-------|------------|
+| [#17](https://github.com/SimpsonLWH/eultc-website/issues/17) | Match results |
+| [#18](https://github.com/SimpsonLWH/eultc-website/issues/18) | Player stats and club-wide leaderboards |
+| [#19](https://github.com/SimpsonLWH/eultc-website/issues/19) | Availability and selection reminders |
+| [#20](https://github.com/SimpsonLWH/eultc-website/issues/20) | Travel reimbursements with treasurer approval |
+| [#21](https://github.com/SimpsonLWH/eultc-website/issues/21) | Membership and payment checks for training sign-ups |
+| [#22](https://github.com/SimpsonLWH/eultc-website/issues/22) | Native training sign-ups |
+| [#23](https://github.com/SimpsonLWH/eultc-website/issues/23) | Club news and notifications |
+| [#24](https://github.com/SimpsonLWH/eultc-website/issues/24) | Role-based calendars |
+| [#25](https://github.com/SimpsonLWH/eultc-website/issues/25) | Polls |
+| [#26](https://github.com/SimpsonLWH/eultc-website/issues/26) | LTA box-league integration - feasibility check |
