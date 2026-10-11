@@ -13,6 +13,11 @@ npm run dev
 - `MONGODB_URI` is read from `.env.local`, which is never committed.
 - JSON API: `/api/health`, `/api/fixtures?scope=upcoming|past|all`, `/api/fixtures/[fixtureId]`, `/api/rankings`.
 
+## Planning
+
+- V1 execution board: [TASKS.md](TASKS.md) - tickets T01-T13 with dependencies and acceptance criteria.
+- Wider club proposal (proposed planning context, not V1 scope): [docs/project-proposal.md](docs/project-proposal.md).
+
 ## Getting Started
 
 First, run the development server:

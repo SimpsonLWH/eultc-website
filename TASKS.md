@@ -14,6 +14,8 @@ Out of scope for V1: news/social posts, newsletters, forum/Q&A, travel reimburse
 
 Visual baseline: the Lovable demo (https://tennis-hub-zenith.lovable.app). It is a polished UI shell with mock data and no backend. Match its layout, spacing and mobile-first polish; do not copy its mock-data approach or its colours. The colour palette comes from the EULTC crest and is defined in T01.
 
+Wider club proposal (proposed planning context; does not change anything in this plan): [docs/project-proposal.md](docs/project-proposal.md).
+
 How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, Done.
 
 ## Summary
