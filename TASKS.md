@@ -21,7 +21,7 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 | ID | Title | Size | Depends on | Suggested owner |
 |----|-------|------|------------|-----------------|
 | T01 | App shell, layout and design tokens | S | none | Lewis |
-| T02 | Data model and database setup | M | none | Daniel |
+| T02 | Data model and database setup | M | none | Lewis |
 | T03 | Authentication and roles | M | T01, T02 | Daniel |
 | T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis |
 | T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis |
@@ -76,40 +76,40 @@ Every ticket is independently mergeable and must leave the app deployable.
 **How to test:** npm run dev; visit / and each nav route at 375px and at desktop width; check the active nav state; confirm there are no console errors.
 
 ### T02 - Data model and database setup
-- Status: Todo
-- Owner: unassigned
+- Status: In progress
+- Owner: Lewis
 - Type: chore
 - Size: M
 - Depends on: none
-- Touches: lib/db/, drizzle/ (or prisma/), scripts/seed.ts, .env.example, package.json, README.md
-- Suggested owner: Daniel
+- Touches: lib/db/, lib/db/models/, scripts/seed.ts, .env.example, package.json, README.md
+- Suggested owner: Lewis
 
-**Why:** Availability, selection and the team sheet all read the same tables. One migration now stops parallel tickets from inventing their own shapes halfway through the track.
+**Why:** Availability, selection and the team sheet all read the same collections. One schema now stops parallel tickets from inventing their own shapes halfway through the track.
 
 **Scope:**
-- Pick a managed Postgres: default to Neon + Drizzle (serverless-friendly on Vercel, SQL-first, light footprint). Supabase is acceptable if the implementer prefers its dashboard. State the choice and a one-paragraph reason in the PR.
-- Tables (snake_case, uuid ids, created_at/updated_at):
-  - players: id, name, email (unique, lowercased), ranking_position (integer, not null, unique), is_active (boolean, default true).
-  - roles: user identity to role mapping (player or admin), keyed by the auth provider's user id from T03. Seeded admin flags are fine.
-  - fixtures: id, opponent, date (timestamptz), venue, home_or_away (check: home or away), teams_playing (integer, 1-10), availability_deadline (timestamptz), status (draft, open, closed, cancelled).
-  - availability_responses: id, player_id (fk), fixture_id (fk), status (available or unavailable), note (text, nullable), updated_at. Unique on (player_id, fixture_id).
-  - team_selections: id, fixture_id (fk), team_number, seed_position, player_id (fk). Unique on (fixture_id, team_number, seed_position). This table exists for the published-sheet split; the V1 live team sheet renders computed teams and does not write to it.
-- Commit migration files. Response rule used everywhere: a fixture accepts availability while status is "open" and now is before availability_deadline.
+- Stack (decided): MongoDB with Mongoose. Local development runs MongoDB in Docker; production uses a managed MongoDB Atlas cluster, with the connection string added to env when the deploy ticket lands. Record the Atlas database name in the PR.
+- Collections (camelCase fields, ObjectId refs, timestamps):
+  - players: name, email (unique, lowercased), rankingPosition (integer, unique), isActive (default true).
+  - user_roles: email to role mapping (player or admin), plus an optional auth provider user id for T03. Seeded admin flags are fine.
+  - fixtures: opponent, date, venue, homeOrAway (home or away), teamsPlaying (integer, 1-10), availabilityDeadline, status (draft, open, closed, cancelled).
+  - availability_responses: playerId, fixtureId, status (available or unavailable), note (nullable). Unique index on (playerId, fixtureId).
+  - team_selections: fixtureId, teamNumber, seedPosition, playerId. Unique index on (fixtureId, teamNumber, seedPosition). This collection exists for the published-sheet split; the V1 live team sheet renders computed teams and does not write to it.
+- No SQL migrations: Mongoose declares the schemas and the seed script syncs indexes (syncIndexes). Response rule used everywhere: a fixture accepts availability while status is "open" and now is before availabilityDeadline.
 - Seed script: 36 fake players with realistic names ranked 1-36, 2 admin roles (Lewis and Daniel placeholder emails), 3 fixtures (one home, one away, one in the past) with deadlines and 4/3/2 teams. Seed must be safe to re-run.
-- Typed data-access layer in lib/db: one thin module per table with the queries later tickets need (listFixtures, getFixture, upsertAvailability, listRankings and so on). No raw SQL in pages.
-- .env.example listing every variable (DATABASE_URL, plus auth variables as they land). README "Local development" section: create database, run migrations, run seed.
-- npm scripts: db:migrate and db:seed (or the Drizzle/Prisma equivalents).
+- Typed data-access layer in lib/db: models behind a thin module per collection with the queries later tickets need (listFixtures, getFixture, upsertAvailability, listRankings and so on). Pages never touch the Mongoose connection directly.
+- .env.example listing every variable (MONGODB_URI, plus auth variables as they land). README "Local development" section: start local MongoDB with Docker, run the seed.
+- npm script: db:seed (tsx plus the env loader used by the script).
 
 **Out of scope:** UI of any kind; auth flows (T03); writing to team_selections; real club data (T13).
 
 **Acceptance criteria:**
-- [ ] A fresh database plus npm run db:migrate plus npm run db:seed gives 36 players, 3 fixtures and 2 admin roles.
-- [ ] Unique constraints exist on players.email, players.ranking_position and availability_responses(player_id, fixture_id).
+- [ ] A fresh database plus npm run db:seed gives 36 players, 3 fixtures and 2 admin roles.
+- [ ] Unique indexes exist on players.email, players.rankingPosition and availability_responses(playerId, fixtureId).
 - [ ] Re-running the seed does not duplicate rows.
-- [ ] lib/db exports typed helpers; no page writes raw SQL.
+- [ ] lib/db exports typed helpers; no page imports Mongoose or the connection directly.
 - [ ] .env.example lists every required variable and the README explains setup in under 15 lines.
 
-**How to test:** create a fresh database, copy .env.example to .env.local, run migrate and seed twice, then query players and fixtures to confirm 36/3 rows and no duplicates.
+**How to test:** start MongoDB with Docker, copy .env.example to .env.local, run the seed twice, then query players and fixtures to confirm 36/3 rows and no duplicates.
 
 ### T03 - Authentication and roles
 - Status: Todo
