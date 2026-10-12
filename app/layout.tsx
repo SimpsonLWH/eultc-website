@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
+import Link from "next/link";
+import Nav from "@/components/nav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -7,24 +9,50 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "EULTC — BUCS team selection beta",
+  title: "EULTC | Clubhouse",
   description:
-    "Edinburgh University Lawn Tennis Club: weekly BUCS availability, team selection and the live team sheet.",
+    "Edinburgh University Lawn Tennis Club availability, team selection, team sheets and fixtures.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
+      <body className="min-h-full bg-slate-50 text-slate-900">
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto flex min-h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+            <Link
+              href="/"
+              className="flex min-w-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-club-600"
+            >
+              <span className="grid size-10 shrink-0 place-items-center rounded-md bg-club-800 text-sm font-bold text-white">
+                EU
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold text-club-900">
+                  Edinburgh University
+                </span>
+                <span className="block truncate text-xs text-slate-500">
+                  Lawn Tennis Club
+                </span>
+              </span>
+            </Link>
+            <span className="hidden text-xs font-medium text-slate-500 sm:block">
+              CLUBHOUSE · 2026/27
+            </span>
+          </div>
+        </header>
+        <Nav />
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+          {children}
+        </main>
+        <footer className="border-t border-slate-200 bg-white">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <span>Edinburgh University Lawn Tennis Club</span>
+            <span>Clubhouse · Team operations</span>
+          </div>
+        </footer>
+      </body>
     </html>
   );
 }
