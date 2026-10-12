@@ -253,7 +253,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** as admin, open the tracker for a seeded fixture, compare with /availability answers from a player session, and confirm the no-response list matches players with no rows.
 
 ### T07 - Ranked selection engine
-- Status: In progress
+- Status: Done
 - Owner: Lewis
 - Type: feat
 - Size: M
