@@ -2,8 +2,7 @@ import "server-only";
 
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { connectToDatabase } from "@/lib/db/connection";
-import { PlayerModel } from "@/lib/db/models/player";
+import { getPlayerByEmail, getUserRoleByEmail } from "@/lib/db";
 
 export function isDevLoginEnabled() {
   return process.env.NODE_ENV !== "production" || process.env.AUTH_DEV_LOGIN === "true";
@@ -46,17 +45,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      await connectToDatabase();
-      const player = await PlayerModel.collection.findOne(
-        { email },
-        { projection: { _id: 1, name: 1, role: 1 } }
-      );
+      // Roles live in the T02 user_roles table; the players row supplies the
+      // display name and the playerId later tickets link against.
+      const [player, userRole] = await Promise.all([
+        getPlayerByEmail(email),
+        getUserRoleByEmail(email),
+      ]);
 
       token.email = email;
       token.name = typeof player?.name === "string" ? player.name : email;
       token.sub = email;
       token.playerId = player?._id ? String(player._id) : null;
-      token.role = player?.role === "player" || player?.role === "admin" ? player.role : null;
+      token.role =
+        userRole?.role === "player" || userRole?.role === "admin" ? userRole.role : null;
       return token;
     },
     async session({ session, token }) {

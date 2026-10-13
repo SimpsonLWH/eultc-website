@@ -1,5 +1,9 @@
 import { requireAdmin } from "@/lib/auth";
 
+// Session checks block this page on purpose; opt out of instant-navigation
+// validation (Next 16, Cache Components) and keep it a blocking route.
+export const instant = false;
+
 export default async function AdminPage() {
   const user = await requireAdmin();
 
