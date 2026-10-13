@@ -25,7 +25,7 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 | T01 | App shell, layout and design tokens | S | none | Lewis | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) |
 | T02 | Data model and database setup | M | none | Lewis | [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) (done, closed) |
 | T03 | Authentication and roles | M | T01, T02 | Daniel | [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) (done, closed) |
-| T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) |
+| T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) (done, closed) |
 | T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis | [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) |
 | T06 | Response tracker (admin) | S | T05 | Daniel | [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) |
 | T07 | Ranked selection engine | M | T02 | Daniel | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) |
@@ -45,7 +45,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 | Milestone | Delivers | Issues |
 |-----------|----------|--------|
 | M1 - Foundations | App shell and design tokens, data layer, auth and roles, deploy/CI, tooling cleanups | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) T01, [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) T02 (done), [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) T03 (done), [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) T11, [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) T12 |
-| M2 - V1 BUCS: core | Fixtures and admin forms, the availability form, the response tracker | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) T04, [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) T05, [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) T06 |
+| M2 - V1 BUCS: core | Fixtures and admin forms, the availability form, the response tracker | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) T04 (done), [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) T05, [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) T06 |
 | M3 - V1 BUCS: selection | Selection engine, live team sheet, rankings and admin editor | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) T07, [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) T08, [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) T09 |
 | M4 - V1 BUCS: beta | Dashboard, real seed data, captain QA pass, launch checklist | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) T10, [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) T13 |
 | M5 - Club members: phase 1 (proposed) | Match results, stats and leaderboards, reminders, training sign-ups | [#17](https://github.com/SimpsonLWH/eultc-website/issues/17), [#18](https://github.com/SimpsonLWH/eultc-website/issues/18), [#19](https://github.com/SimpsonLWH/eultc-website/issues/19), [#22](https://github.com/SimpsonLWH/eultc-website/issues/22) |
@@ -161,7 +161,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** sign in with a seeded player email, refresh, confirm session persists; sign in with the admin email and call an admin-only helper; finish with an unseeded email and check the empty state.
 
 ### T04 - Fixtures list, fixture detail and admin fixture forms
-- Status: In progress
+- Status: Done
 - Owner: Lewis
 - Type: feat
 - Size: M
