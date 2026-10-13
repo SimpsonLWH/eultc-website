@@ -161,8 +161,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** sign in with a seeded player email, refresh, confirm session persists; sign in with the admin email and call an admin-only helper; finish with an unseeded email and check the empty state.
 
 ### T04 - Fixtures list, fixture detail and admin fixture forms
-- Status: Todo
-- Owner: unassigned
+- Status: In progress
+- Owner: Lewis
 - Type: feat
 - Size: M
 - Depends on: T01, T02
