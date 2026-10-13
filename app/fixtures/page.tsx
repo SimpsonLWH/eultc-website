@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 
 import FixtureCard from "@/components/fixtures/fixture-card";
 import { getCurrentUser } from "@/lib/auth";
@@ -14,6 +15,8 @@ export default function FixturesPage() {
 }
 
 async function FixturesContent() {
+  await connection();
+
   const user = await getCurrentUser();
   const isAdmin = user?.role === "admin";
 

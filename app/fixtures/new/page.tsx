@@ -7,6 +7,10 @@ import { emptyFixtureFormValues } from "@/lib/fixtures/validate";
 
 import { createFixtureAction } from "../actions";
 
+// The session check blocks this page on purpose; opt out of instant-navigation
+// validation (Next 16, Cache Components) and keep it a blocking route.
+export const instant = false;
+
 export default async function NewFixturePage() {
   await requireAdmin();
 

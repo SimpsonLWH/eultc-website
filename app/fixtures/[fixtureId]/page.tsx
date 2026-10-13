@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 
 import FixtureStatusBadge from "@/components/fixtures/fixture-status-badge";
 import Badge from "@/components/ui/badge";
@@ -13,21 +14,26 @@ import {
   formatLondonTime,
 } from "@/lib/fixtures/datetime";
 
-export default async function FixtureDetailPage({
+export default function FixtureDetailPage({
   params,
 }: PageProps<"/fixtures/[fixtureId]">) {
-  const { fixtureId } = await params;
-
   return (
     <Suspense
       fallback={<div aria-busy="true" className="min-h-64 rounded-md bg-white" />}
     >
-      <FixtureDetail fixtureId={fixtureId} />
+      <FixtureDetail params={params} />
     </Suspense>
   );
 }
 
-async function FixtureDetail({ fixtureId }: { fixtureId: string }) {
+type FixtureDetailProps = {
+  params: PageProps<"/fixtures/[fixtureId]">["params"];
+};
+
+async function FixtureDetail({ params }: FixtureDetailProps) {
+  await connection();
+  const { fixtureId } = await params;
+
   const fixture = await getFixtureById(fixtureId);
   if (!fixture) {
     notFound();

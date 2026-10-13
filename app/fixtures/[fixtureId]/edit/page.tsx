@@ -13,6 +13,10 @@ import type { FixtureFormValues } from "@/lib/fixtures/validate";
 
 import { updateFixtureAction } from "../../actions";
 
+// The session check blocks this page on purpose; opt out of instant-navigation
+// validation (Next 16, Cache Components) and keep it a blocking route.
+export const instant = false;
+
 export default async function EditFixturePage({
   params,
 }: PageProps<"/fixtures/[fixtureId]/edit">) {
