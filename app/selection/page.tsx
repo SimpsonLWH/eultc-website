@@ -1,5 +1,6 @@
 import WorkspacePage from "@/components/workspace-page";
 
+// Configure the shared placeholder shell for team selection.
 export default function SelectionPage() {
   return (
     <WorkspacePage

@@ -1,3 +1,4 @@
+// Public database API: callers can import domain operations without depending on file layout.
 export { connectToDatabase } from "./connection";
 export { getPlayerByEmail, getPlayerById, listRankings } from "./players";
 export {

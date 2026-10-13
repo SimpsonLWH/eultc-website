@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 // validation (Next 16, Cache Components) and keep it a blocking route.
 export const instant = false;
 
+// Example protected page showing the signed-in identity and assigned club role.
 export default async function AccountPage() {
   const user = await requireUser();
 

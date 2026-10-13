@@ -18,6 +18,7 @@
         "name": "next"
       }
     ],
+    // Let app and shared modules import from the repository root with a stable alias.
     "paths": {
       "@/*": ["./*"]
     }
@@ -30,5 +31,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
+  // Dependencies are checked through their published types rather than workspace compilation.
   "exclude": ["node_modules"]
 }

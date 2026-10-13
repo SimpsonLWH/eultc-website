@@ -5,12 +5,15 @@ import Button from "@/components/ui/button";
 import { getCurrentUser } from "./index";
 import { signOut } from "./config";
 
+// Clear the Auth.js session and return the user to the sign-in page.
 async function signOutAction() {
   "use server";
   await signOut({ redirectTo: "/sign-in" });
 }
 
+// Render the identity from the server session, or a sign-in link for anonymous visitors.
 export async function SessionHeader() {
+  // Keep this request-specific session read out of the static prerender.
   await connection();
   const user = await getCurrentUser();
 

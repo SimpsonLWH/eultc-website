@@ -1,7 +1,6 @@
 import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
 
-// Reserved for a published team sheet (distinct from the live computed sheet).
-// V1 renders computed teams and does not write here yet.
+// Persist a published team sheet separately from the live computed selection result.
 const teamSelectionSchema = new Schema(
   {
     fixtureId: { type: Schema.Types.ObjectId, ref: "Fixture", required: true },
@@ -12,6 +11,7 @@ const teamSelectionSchema = new Schema(
   { timestamps: true, collection: "team_selections" }
 );
 
+// A player can occupy each team position only once per fixture.
 teamSelectionSchema.index(
   { fixtureId: 1, teamNumber: 1, seedPosition: 1 },
   { unique: true }
@@ -19,6 +19,7 @@ teamSelectionSchema.index(
 
 export type TeamSelection = InferSchemaType<typeof teamSelectionSchema>;
 
+// Reuse the compiled model during development reloads.
 export const TeamSelectionModel: Model<TeamSelection> =
   (models.TeamSelection as Model<TeamSelection> | undefined) ??
   model<TeamSelection>("TeamSelection", teamSelectionSchema);

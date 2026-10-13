@@ -16,6 +16,7 @@ type SortablePlayer = {
   email?: string;
 };
 
+// Convert Mongoose values into stable JSON primitives for API responses.
 export function serializeFixture(fixture: SortableFixture) {
   return {
     id: String(fixture._id),
@@ -29,7 +30,7 @@ export function serializeFixture(fixture: SortableFixture) {
   };
 }
 
-// Member-facing shape. Emails stay out of the rankings API on purpose.
+// Member-facing rankings intentionally omit email addresses.
 export function serializeRankedPlayer(player: SortablePlayer) {
   return {
     id: String(player._id),

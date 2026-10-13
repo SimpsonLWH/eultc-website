@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
+/* Keep the application on the light palette until a full dark theme is defined. */
 :root {
   color-scheme: light;
 }
 
+/* Tailwind derives utilities such as bg-club-700 and text-court-600 from these tokens. */
 @theme inline {
   --color-club-50: #f0f6fb;
   --color-club-100: #dceaf5;

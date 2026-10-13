@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from "react";
 
+// Provide the shared framed surface while forwarding semantic section attributes.
 export default function Card({
   className = "",
   ...props

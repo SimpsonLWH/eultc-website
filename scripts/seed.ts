@@ -8,6 +8,7 @@ import { PlayerModel } from "../lib/db/models/player";
 import { TeamSelectionModel } from "../lib/db/models/team-selection";
 import { UserRoleModel } from "../lib/db/models/user-role";
 
+// Load local environment files when this script runs outside Next.js.
 function loadEnvFiles() {
   for (const file of [".env.local", ".env"]) {
     if (existsSync(file)) {
@@ -16,6 +17,7 @@ function loadEnvFiles() {
   }
 }
 
+// Produce stable sample addresses so reruns update the same player records.
 function emailFor(name: string) {
   return `${name.toLowerCase().replace(/[^a-z]+/g, ".")}@example.com`;
 }
@@ -66,6 +68,7 @@ const ADMINS = [
 
 const now = new Date();
 
+// Keep sample fixture dates relative to the time this seed run begins.
 function at(daysFromNow: number, hour: number) {
   const date = new Date(now);
   date.setDate(date.getDate() + daysFromNow);
@@ -116,6 +119,7 @@ async function main() {
       TeamSelectionModel.syncIndexes(),
     ]);
 
+    // Reuse the same ranking data on every run; bulk upserts avoid duplicate sample players.
     const players = PLAYER_NAMES.map((name, index) => ({
       name,
       email: emailFor(name),

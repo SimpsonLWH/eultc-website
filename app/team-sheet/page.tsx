@@ -1,5 +1,6 @@
 import WorkspacePage from "@/components/workspace-page";
 
+// Configure the shared placeholder shell for published team sheets.
 export default function TeamSheetPage() {
   return (
     <WorkspacePage

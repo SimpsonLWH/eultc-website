@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 // validation (Next 16, Cache Components) and keep it a blocking route.
 export const instant = false;
 
+// This route demonstrates an admin-only page guarded on the server.
 export default async function AdminPage() {
   const user = await requireAdmin();
 

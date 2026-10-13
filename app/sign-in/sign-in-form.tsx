@@ -5,12 +5,14 @@ import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { signInWithEmail, type SignInState } from "./actions";
 
+// Bind the server action to a small client form so pending and error states update immediately.
 export default function SignInForm({ enabled }: { enabled: boolean }) {
   const [state, action, pending] = useActionState<SignInState, FormData>(
     signInWithEmail,
     null
   );
 
+  // Do not render a credential form when the provider is unavailable in production.
   if (!enabled) {
     return (
       <p className="rounded-md bg-slate-50 p-4 text-sm leading-6 text-slate-600">

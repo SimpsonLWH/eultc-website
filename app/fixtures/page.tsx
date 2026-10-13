@@ -1,5 +1,6 @@
 import WorkspacePage from "@/components/workspace-page";
 
+// Configure the shared placeholder shell for the season fixture list.
 export default function FixturesPage() {
   return (
     <WorkspacePage

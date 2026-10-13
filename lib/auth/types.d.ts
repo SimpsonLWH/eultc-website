@@ -1,5 +1,6 @@
 import type { DefaultSession } from "next-auth";
 
+// Add the app's identity and roster authorization claims to Auth.js sessions.
 declare module "next-auth" {
   interface Session {
     user: {
@@ -10,6 +11,7 @@ declare module "next-auth" {
   }
 }
 
+// Carry database-derived claims in the encrypted JWT between requests.
 declare module "next-auth/jwt" {
   interface JWT {
     playerId?: string | null;
