@@ -1,0 +1,52 @@
+"use client";
+
+import { useActionState } from "react";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import { signInWithEmail, type SignInState } from "./actions";
+
+export default function SignInForm({ enabled }: { enabled: boolean }) {
+  const [state, action, pending] = useActionState<SignInState, FormData>(
+    signInWithEmail,
+    null
+  );
+
+  if (!enabled) {
+    return (
+      <p className="rounded-md bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+        Email sign-in is not enabled in this environment.
+      </p>
+    );
+  }
+
+  return (
+    <form action={action} className="space-y-4">
+      <div>
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+          Email address
+        </label>
+        <Input
+          autoComplete="email"
+          autoFocus
+          id="email"
+          name="email"
+          placeholder="name@example.com"
+          required
+          type="email"
+        />
+      </div>
+      {state?.error ? (
+        <p aria-live="polite" className="text-sm font-medium text-red-700" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <Button className="w-full" disabled={pending} type="submit">
+        {pending ? "Signing in…" : "Continue with email"}
+      </Button>
+      <p className="text-xs leading-5 text-slate-500">
+        Development login creates a local session; no email is sent. Use an email seeded in the
+        player list.
+      </p>
+    </form>
+  );
+}

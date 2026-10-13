@@ -24,7 +24,7 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 |----|-------|------|------------|-----------------|-------|
 | T01 | App shell, layout and design tokens | S | none | Lewis | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) |
 | T02 | Data model and database setup | M | none | Lewis | [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) (done, closed) |
-| T03 | Authentication and roles | M | T01, T02 | Daniel | [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) |
+| T03 | Authentication and roles | M | T01, T02 | Daniel | [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) (done, closed) |
 | T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) |
 | T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis | [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) |
 | T06 | Response tracker (admin) | S | T05 | Daniel | [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) |
@@ -44,7 +44,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 
 | Milestone | Delivers | Issues |
 |-----------|----------|--------|
-| M1 - Foundations | App shell and design tokens, data layer, auth and roles, deploy/CI, tooling cleanups | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) T01, [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) T02 (done), [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) T03, [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) T11, [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) T12 |
+| M1 - Foundations | App shell and design tokens, data layer, auth and roles, deploy/CI, tooling cleanups | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) T01, [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) T02 (done), [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) T03 (done), [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) T11, [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) T12 |
 | M2 - V1 BUCS: core | Fixtures and admin forms, the availability form, the response tracker | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) T04, [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) T05, [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) T06 |
 | M3 - V1 BUCS: selection | Selection engine, live team sheet, rankings and admin editor | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) T07, [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) T08, [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) T09 |
 | M4 - V1 BUCS: beta | Dashboard, real seed data, captain QA pass, launch checklist | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) T10, [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) T13 |
@@ -131,8 +131,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** set MONGODB_URI in .env.local (Atlas free tier or any local mongod), run npm run db:seed twice, confirm 36 players, 3 fixtures and 2 admins with no duplicates, then curl the API routes.
 
 ### T03 - Authentication and roles
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Daniel
 - Type: feat
 - Size: M
 - Depends on: T01, T02

@@ -133,6 +133,25 @@ async function main() {
       }))
     );
 
+    // Admins also get an inactive players row so they pass the "on the list"
+    // gate in T03 while staying out of the ranking list (isActive: false).
+    await PlayerModel.collection.bulkWrite([
+      ...ADMINS.map((admin, index) => ({
+        updateOne: {
+          filter: { email: admin.email },
+          update: {
+            $set: {
+              name: admin.name,
+              email: admin.email,
+              rankingPosition: players.length + index + 1,
+              isActive: false,
+            },
+          },
+          upsert: true,
+        },
+      })),
+    ]);
+
     await UserRoleModel.bulkWrite([
       ...players.map((player) => ({
         updateOne: {

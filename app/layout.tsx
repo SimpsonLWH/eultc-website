@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import Nav from "@/components/nav";
+import { PlayerGate } from "@/lib/auth/player-gate";
+import { SessionHeader } from "@/lib/auth/session-header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,14 +40,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 </span>
               </span>
             </Link>
-            <span className="hidden text-xs font-medium text-slate-500 sm:block">
-              CLUBHOUSE · 2026/27
-            </span>
+            <Suspense
+              fallback={<span className="h-9 w-24 animate-pulse rounded bg-slate-100" />}
+            >
+              <SessionHeader />
+            </Suspense>
           </div>
         </header>
         <Nav />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
-          {children}
+          <Suspense
+            fallback={<div aria-busy="true" className="min-h-48 rounded-md bg-white" />}
+          >
+            <PlayerGate>{children}</PlayerGate>
+          </Suspense>
         </main>
         <footer className="border-t border-slate-200 bg-white">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
