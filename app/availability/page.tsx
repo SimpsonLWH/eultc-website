@@ -1,5 +1,6 @@
 import WorkspacePage from "@/components/workspace-page";
 
+// Configure the shared placeholder shell for weekly player availability.
 export default function AvailabilityPage() {
   return (
     <WorkspacePage

@@ -50,6 +50,7 @@ export async function listFixtures(
   return FixtureModel.find(filter).sort({ date: 1 }).lean();
 }
 
+// Availability is open only while the fixture status and deadline both allow responses.
 export async function listOpenFixtures(now = new Date()) {
   await connectToDatabase();
   return FixtureModel.find({ status: "open", availabilityDeadline: { $gt: now } })
@@ -57,6 +58,7 @@ export async function listOpenFixtures(now = new Date()) {
     .lean();
 }
 
+// Invalid ObjectIds are treated as not-found rather than thrown as cast errors.
 export async function getFixtureById(id: string) {
   await connectToDatabase();
   if (!mongoose.isValidObjectId(id)) {
@@ -65,12 +67,14 @@ export async function getFixtureById(id: string) {
   return FixtureModel.findById(id).lean();
 }
 
+// Create and return a plain object so callers do not depend on a live Mongoose document.
 export async function createFixture(input: FixtureInput) {
   await connectToDatabase();
   const fixture = await FixtureModel.create(input);
   return fixture.toObject();
 }
 
+// Validate partial updates through the schema and return null for invalid or missing ids.
 export async function updateFixture(id: string, input: Partial<FixtureInput>) {
   await connectToDatabase();
   if (!mongoose.isValidObjectId(id)) {

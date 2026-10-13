@@ -6,6 +6,7 @@ import FixtureCard from "@/components/fixtures/fixture-card";
 import { getCurrentUser } from "@/lib/auth";
 import { listFixtures } from "@/lib/db";
 
+// Configure the shared placeholder shell for the season fixture list.
 export default function FixturesPage() {
   return (
     <Suspense fallback={<FixturesSkeleton />}>

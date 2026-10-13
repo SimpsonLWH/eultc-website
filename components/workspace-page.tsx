@@ -3,6 +3,7 @@ import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Input from "@/components/ui/input";
 
+// Page-specific copy is passed in while the preview layout remains shared.
 type WorkspacePageProps = {
   title: string;
   description: string;
@@ -10,6 +11,7 @@ type WorkspacePageProps = {
   sectionDescription: string;
 };
 
+// Render the common heading, search controls, status, and preview panels.
 export default function WorkspacePage({
   title,
   description,

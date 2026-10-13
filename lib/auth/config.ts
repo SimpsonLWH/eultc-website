@@ -4,16 +4,19 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getPlayerByEmail, getUserRoleByEmail } from "@/lib/db";
 
+// Credentials are intentionally a local shortcut; production requires an explicit opt-in.
 export function isDevLoginEnabled() {
   return process.env.NODE_ENV !== "production" || process.env.AUTH_DEV_LOGIN === "true";
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Keep Auth.js handlers and server helpers on one JWT-backed configuration.
 export const { handlers, auth, signIn, signOut } = NextAuth({
   basePath: "/auth",
   pages: { signIn: "/sign-in" },
   session: { strategy: "jwt" },
+  // This app trusts requests forwarded through its configured Next.js host/proxy.
   trustHost: true,
   providers: isDevLoginEnabled()
     ? [
@@ -31,6 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               return null;
             }
 
+            // Dev login does not prove email ownership; never expose it on a public production site.
             return { id: email, email, name: email };
           },
         }),
@@ -40,6 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       const email = (user?.email ?? token.email)?.trim().toLowerCase();
       if (!email) {
+        // An email-less token must not retain stale player or privilege claims.
         token.role = null;
         token.playerId = null;
         return token;
@@ -61,6 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
+      // Expose only identity and authorization claims needed by server components.
       session.user.id = token.sub ?? token.email ?? "";
       session.user.playerId = typeof token.playerId === "string" ? token.playerId : null;
       session.user.role =

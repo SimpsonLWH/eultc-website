@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Reuse one in-flight connection across requests and Next.js development reloads.
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -9,6 +10,7 @@ const globalForMongoose = globalThis as typeof globalThis & {
   __eultcMongoose?: MongooseCache;
 };
 
+// Store the cache on globalThis so module re-evaluation does not open extra sockets.
 const cache: MongooseCache =
   globalForMongoose.__eultcMongoose ?? { conn: null, promise: null };
 
@@ -19,6 +21,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     return cache.conn;
   }
 
+  // Connect once using the configured URI and clear a failed promise so later calls can retry.
   const uri = process.env.MONGODB_URI;
   if (!uri) {
     throw new Error(
