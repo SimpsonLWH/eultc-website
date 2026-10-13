@@ -11,7 +11,7 @@ import {
 
 type FixtureResponseFormProps = {
   fixtureId: string;
-  eligibleTeams: number[];
+  eligible: boolean;
   savedStatus: AvailabilityStatus | null;
   savedNote: string;
 };
@@ -19,7 +19,7 @@ type FixtureResponseFormProps = {
 // Use pressed buttons for one-tap answers while keeping form status accessible by keyboard.
 export default function FixtureResponseForm({
   fixtureId,
-  eligibleTeams,
+  eligible,
   savedStatus,
   savedNote,
 }: FixtureResponseFormProps) {
@@ -32,13 +32,10 @@ export default function FixtureResponseForm({
   return (
     <form action={formAction} className="mt-5 space-y-4">
       <input type="hidden" name="fixtureId" value={fixtureId} />
-      <p className="text-sm leading-6 text-slate-600">
-        Eligible teams for your ranking: {eligibleTeams.join(", ")}. Your answer is for the fixture;
-        no team assignment is saved.
-      </p>
-      {eligibleTeams.length === 0 ? (
+      <p className="text-sm leading-6 text-slate-600">Your answer is for this specific fixture team.</p>
+      {!eligible ? (
         <p className="text-sm font-medium text-slate-600" role="note">
-          Your ranked team is not included in this fixture, so signup is unavailable.
+          This fixture is for a lower-ranked team than your ranking allows.
         </p>
       ) : null}
 
@@ -50,7 +47,7 @@ export default function FixtureResponseForm({
               key={answer}
               aria-pressed={currentStatus === answer}
               className="w-full capitalize"
-              disabled={pending || eligibleTeams.length === 0}
+              disabled={pending || !eligible}
               name="status"
               type="submit"
               value={answer}
@@ -71,7 +68,7 @@ export default function FixtureResponseForm({
           name="note"
           placeholder="Add a short note for the captains"
           defaultValue={savedNote}
-          disabled={eligibleTeams.length === 0}
+          disabled={!eligible}
         />
       </label>
 

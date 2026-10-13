@@ -93,9 +93,7 @@ async function AvailabilityContent() {
               key={String(fixture._id)}
               fixtureId={String(fixture._id)}
               fixture={fixture}
-              eligibleTeams={eligibleTeams(player.rankingPosition).filter(
-                (teamNumber) => teamNumber <= fixture.teamsPlaying
-              )}
+              eligible={eligibleTeams(player.rankingPosition).includes(fixture.teamNumber)}
               savedResponse={responsesByFixture.get(String(fixture._id)) ?? null}
               locked={false}
             />
@@ -111,9 +109,7 @@ async function AvailabilityContent() {
               key={String(fixture._id)}
               fixtureId={String(fixture._id)}
               fixture={fixture}
-              eligibleTeams={eligibleTeams(player.rankingPosition).filter(
-                (teamNumber) => teamNumber <= fixture.teamsPlaying
-              )}
+              eligible={eligibleTeams(player.rankingPosition).includes(fixture.teamNumber)}
               savedResponse={responsesByFixture.get(String(fixture._id)) ?? null}
               locked
             />

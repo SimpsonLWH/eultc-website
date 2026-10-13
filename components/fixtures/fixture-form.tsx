@@ -22,6 +22,12 @@ const HOME_OR_AWAY_OPTIONS = [
   { value: "away", label: "Away" },
 ];
 
+// Match the fixture model's gender values while showing readable labels to captains.
+const TEAM_GENDER_OPTIONS = [
+  { value: "male", label: "Men's" },
+  { value: "female", label: "Women's" },
+];
+
 const STATUS_OPTIONS = [
   { value: "draft", label: "Draft (hidden from players)" },
   { value: "open", label: "Open (accepting signups)" },
@@ -91,6 +97,14 @@ export default function FixtureForm({
           options={HOME_OR_AWAY_OPTIONS}
         />
         <SelectField
+          defaultValue={values.gender}
+          error={errors.gender}
+          id="gender"
+          label="Team gender"
+          name="gender"
+          options={TEAM_GENDER_OPTIONS}
+        />
+        <SelectField
           defaultValue={values.status}
           error={errors.status}
           id="status"
@@ -153,14 +167,14 @@ export default function FixtureForm({
       </fieldset>
 
       <TextField
-        defaultValue={values.teamsPlaying}
-        error={errors.teamsPlaying}
-        id="teamsPlaying"
+        defaultValue={values.teamNumber}
+        error={errors.teamNumber}
+        id="teamNumber"
         inputMode="numeric"
-        label="Teams playing (1-10)"
+        label="Team number (1-10)"
         max={10}
         min={1}
-        name="teamsPlaying"
+        name="teamNumber"
         required
         step={1}
         type="number"

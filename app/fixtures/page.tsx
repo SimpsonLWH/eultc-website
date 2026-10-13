@@ -98,7 +98,8 @@ function FixtureSection({
                 date: fixture.date,
                 venue: fixture.venue,
                 homeOrAway: fixture.homeOrAway,
-                teamsPlaying: fixture.teamsPlaying,
+                gender: fixture.gender,
+                teamNumber: fixture.teamNumber,
                 availabilityDeadline: fixture.availabilityDeadline,
                 status: fixture.status,
               }}

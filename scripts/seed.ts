@@ -4,6 +4,7 @@ import { connectToDatabase } from "../lib/db/connection";
 import type { FixtureInput } from "../lib/db/fixtures";
 import { AvailabilityResponseModel } from "../lib/db/models/availability-response";
 import { FixtureModel } from "../lib/db/models/fixture";
+import type { TeamGender } from "../lib/db/models/fixture";
 import { PlayerModel } from "../lib/db/models/player";
 import { TeamSelectionModel } from "../lib/db/models/team-selection";
 import { UserRoleModel } from "../lib/db/models/user-role";
@@ -66,6 +67,11 @@ const ADMINS = [
   { name: "Daniel", email: "daniel@example.com" },
 ];
 
+// Group legacy sample match details with explicit team identities before flattening them.
+type SeedFixtureGroup = Omit<FixtureInput, "gender" | "teamNumber"> & {
+  teams: Array<{ gender: TeamGender; teamNumber: number }>;
+};
+
 const now = new Date();
 
 // Keep sample fixture dates relative to the time this seed run begins.
@@ -76,35 +82,101 @@ function at(daysFromNow: number, hour: number) {
   return date;
 }
 
-const FIXTURES = [
+// Preserve the old sample match counts while expanding each team into its own fixture row.
+const FIXTURE_GROUPS = [
   {
     opponent: "University of Stirling",
     date: at(-12, 13),
     venue: "Stirling University Sports Centre",
     homeOrAway: "away",
-    teamsPlaying: 2,
     availabilityDeadline: at(-13, 20),
     status: "closed",
+    teams: [
+      { gender: "male", teamNumber: 1 },
+      { gender: "female", teamNumber: 1 },
+    ],
   },
   {
     opponent: "Heriot-Watt University",
     date: at(5, 14),
     venue: "Edinburgh University Tennis Courts",
     homeOrAway: "home",
-    teamsPlaying: 4,
     availabilityDeadline: at(4, 20),
     status: "open",
+    teams: [
+      { gender: "male", teamNumber: 1 },
+      { gender: "male", teamNumber: 2 },
+      { gender: "female", teamNumber: 1 },
+      { gender: "female", teamNumber: 2 },
+    ],
   },
   {
     opponent: "University of Glasgow",
     date: at(12, 13),
     venue: "Garscube Sports Complex",
     homeOrAway: "away",
-    teamsPlaying: 3,
     availabilityDeadline: at(11, 20),
     status: "open",
+    teams: [
+      { gender: "male", teamNumber: 1 },
+      { gender: "female", teamNumber: 1 },
+      { gender: "male", teamNumber: 2 },
+    ],
   },
-] satisfies FixtureInput[];
+] satisfies SeedFixtureGroup[];
+
+// Flatten each opponent's team assignments into independent fixture documents.
+const FIXTURES: FixtureInput[] = FIXTURE_GROUPS.flatMap(({ teams, ...fixture }) =>
+  teams.map((team) => ({ ...fixture, ...team }))
+);
+
+// Expand an aggregate count into a balanced alternating sequence of men's and women's teams.
+function legacyTeamAssignments(
+  teamCountValue: unknown
+): Array<{ gender: TeamGender; teamNumber: number }> {
+  const teamCount =
+    typeof teamCountValue === "number" &&
+    Number.isInteger(teamCountValue) &&
+    teamCountValue >= 1 &&
+    teamCountValue <= 10
+      ? teamCountValue
+      : 1;
+  const nextTeamNumber: Record<TeamGender, number> = { male: 1, female: 1 };
+
+  return Array.from({ length: teamCount }, (_, index) => {
+    const gender: TeamGender = index % 2 === 0 ? "male" : "female";
+    const teamNumber = nextTeamNumber[gender];
+    nextTeamNumber[gender] += 1;
+    return { gender, teamNumber };
+  });
+}
+
+// Upgrade old fixture records before seeding current examples, preserving response references.
+async function migrateLegacyFixtures() {
+  const legacyFixtures = await FixtureModel.collection
+    .find({
+      $or: [{ gender: { $exists: false } }, { teamNumber: { $exists: false } }],
+    })
+    .toArray();
+
+  for (const legacy of legacyFixtures) {
+    const { _id, teamsPlaying, ...fixtureFields } = legacy;
+    const assignments = legacyTeamAssignments(teamsPlaying);
+
+    for (const [index, assignment] of assignments.entries()) {
+      if (index === 0) {
+        // Keep the old document id for the first team so existing answers still reference it.
+        await FixtureModel.collection.updateOne(
+          { _id },
+          { $set: { ...fixtureFields, ...assignment }, $unset: { teamsPlaying: "" } }
+        );
+      } else {
+        // Other teams need independent fixture ids because one answer is stored per fixture.
+        await FixtureModel.create({ ...fixtureFields, ...assignment });
+      }
+    }
+  }
+}
 
 async function main() {
   loadEnvFiles();
@@ -118,6 +190,8 @@ async function main() {
       AvailabilityResponseModel.syncIndexes(),
       TeamSelectionModel.syncIndexes(),
     ]);
+
+    await migrateLegacyFixtures();
 
     // Reuse the same ranking data on every run; bulk upserts avoid duplicate sample players.
     const players = PLAYER_NAMES.map((name, index) => ({
@@ -173,15 +247,20 @@ async function main() {
       })),
     ]);
 
-    await FixtureModel.bulkWrite(
-      FIXTURES.map((fixture) => ({
-        updateOne: {
-          filter: { opponent: fixture.opponent },
-          update: { $set: fixture },
-          upsert: true,
+    for (const fixture of FIXTURES) {
+      // Stable sample identity keeps date-relative fixture rows idempotent across days.
+      await FixtureModel.updateOne(
+        {
+          opponent: fixture.opponent,
+          venue: fixture.venue,
+          homeOrAway: fixture.homeOrAway,
+          gender: fixture.gender,
+          teamNumber: fixture.teamNumber,
         },
-      }))
-    );
+        { $set: fixture },
+        { upsert: true, runValidators: true }
+      );
+    }
 
     const [playerCount, roleCount, adminCount, fixtureCount] = await Promise.all([
       PlayerModel.countDocuments(),

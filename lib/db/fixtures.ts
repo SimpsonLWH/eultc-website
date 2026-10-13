@@ -5,6 +5,7 @@ import {
   FixtureModel,
   type Fixture,
   type FixtureStatus,
+  type TeamGender,
   type HomeOrAway,
 } from "./models/fixture";
 
@@ -20,7 +21,8 @@ export type FixtureInput = {
   date: Date;
   venue: string;
   homeOrAway: HomeOrAway;
-  teamsPlaying: number;
+  gender: TeamGender;
+  teamNumber: number;
   availabilityDeadline: Date;
   status: FixtureStatus;
 };

@@ -4,6 +4,10 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
 export const HOME_OR_AWAY = ["home", "away"] as const;
 export type HomeOrAway = (typeof HOME_OR_AWAY)[number];
 
+// Fixtures identify a specific men's or women's team, not an aggregate team count.
+export const TEAM_GENDERS = ["male", "female"] as const;
+export type TeamGender = (typeof TEAM_GENDERS)[number];
+
 export const FIXTURE_STATUSES = ["draft", "open", "closed", "cancelled"] as const;
 export type FixtureStatus = (typeof FIXTURE_STATUSES)[number];
 
@@ -13,7 +17,8 @@ const fixtureSchema = new Schema(
     date: { type: Date, required: true },
     venue: { type: String, required: true, trim: true },
     homeOrAway: { type: String, required: true, enum: [...HOME_OR_AWAY] },
-    teamsPlaying: { type: Number, required: true, min: 1, max: 10 },
+    gender: { type: String, required: true, enum: [...TEAM_GENDERS] },
+    teamNumber: { type: Number, required: true, min: 1, max: 10 },
     availabilityDeadline: { type: Date, required: true },
     status: { type: String, required: true, enum: [...FIXTURE_STATUSES], default: "draft" },
   },

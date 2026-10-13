@@ -14,7 +14,8 @@ const baseValues: FixtureFormValues = {
   deadlineDate: "2026-10-20",
   deadlineTime: "20:00",
   homeOrAway: "away",
-  teamsPlaying: "4",
+  gender: "female",
+  teamNumber: "2",
   status: "open",
 };
 
@@ -35,7 +36,8 @@ describe("validateFixtureForm", () => {
         "2026-10-20T19:00:00.000Z"
       );
       expect(result.value.homeOrAway).toBe("away");
-      expect(result.value.teamsPlaying).toBe(4);
+      expect(result.value.gender).toBe("female");
+      expect(result.value.teamNumber).toBe(2);
       expect(result.value.status).toBe("open");
     }
   });
@@ -50,16 +52,24 @@ describe("validateFixtureForm", () => {
     }
   });
 
-  it("accepts the team-count bounds and rejects everything else", () => {
-    expect(validateFixtureForm(values({ teamsPlaying: "1" })).ok).toBe(true);
-    expect(validateFixtureForm(values({ teamsPlaying: "10" })).ok).toBe(true);
+  it("accepts team-number bounds and rejects everything else", () => {
+    expect(validateFixtureForm(values({ teamNumber: "1" })).ok).toBe(true);
+    expect(validateFixtureForm(values({ teamNumber: "10" })).ok).toBe(true);
 
-    for (const teamsPlaying of ["0", "11", "4.5", "", "four"]) {
-      const result = validateFixtureForm(values({ teamsPlaying }));
+    for (const teamNumber of ["0", "11", "4.5", "", "four"]) {
+      const result = validateFixtureForm(values({ teamNumber }));
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.errors.teamsPlaying).toBeTruthy();
+        expect(result.errors.teamNumber).toBeTruthy();
       }
+    }
+  });
+
+  it("rejects genders outside the fixture schema enum", () => {
+    const result = validateFixtureForm(values({ gender: "mixed" }));
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.gender).toBeTruthy();
     }
   });
 
@@ -96,12 +106,14 @@ describe("fixtureFormValuesFromFormData", () => {
   it("reads and trims form fields, defaulting missing ones to empty", () => {
     const formData = new FormData();
     formData.set("opponent", "  Heriot-Watt University ");
-    formData.set("teamsPlaying", "2");
+    formData.set("teamNumber", "2");
+    formData.set("gender", "female");
 
     const parsed = fixtureFormValuesFromFormData(formData);
 
     expect(parsed.opponent).toBe("Heriot-Watt University");
-    expect(parsed.teamsPlaying).toBe("2");
+    expect(parsed.teamNumber).toBe("2");
+    expect(parsed.gender).toBe("female");
     expect(parsed.venue).toBe("");
     expect(parsed.status).toBe("");
   });

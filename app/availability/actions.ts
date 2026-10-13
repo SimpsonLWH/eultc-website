@@ -62,19 +62,18 @@ export async function saveAvailabilityAnswer(
     return { error: "This signup is closed; your saved answer has not been changed." };
   }
 
-  const allowedTeams = eligibleTeams(player.rankingPosition).filter(
-    (teamNumber) => teamNumber <= fixture.teamsPlaying
-  );
-  if (allowedTeams.length === 0) {
-    return { error: "Your ranking is not eligible for a team in this fixture." };
+  // Authorize against the database's team number, not an optional client team value.
+  const playerEligibleTeams = eligibleTeams(player.rankingPosition);
+  if (!playerEligibleTeams.includes(fixture.teamNumber)) {
+    return { error: "Your ranking is not eligible for this fixture's team." };
   }
 
-  // T02 stores fixture-level availability, not a team assignment; reject a forged team assertion if supplied.
+  // Reject a forged team number when an external caller supplies one, even though the fixture owns the assignment.
   const requestedTeamValue = formData.get("teamNumber");
   if (typeof requestedTeamValue === "string" && requestedTeamValue.trim() !== "") {
     const requestedTeam = Number(requestedTeamValue);
-    if (!Number.isInteger(requestedTeam) || !allowedTeams.includes(requestedTeam)) {
-      return { error: "You can only sign up for one of your eligible teams." };
+    if (!Number.isInteger(requestedTeam) || requestedTeam !== fixture.teamNumber) {
+      return { error: "The submitted team does not match this fixture." };
     }
   }
 

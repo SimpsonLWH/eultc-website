@@ -13,6 +13,7 @@ import {
   formatLondonDateTime,
   formatLondonTime,
 } from "@/lib/fixtures/datetime";
+import { formatTeamLabel } from "@/lib/fixtures/team-label";
 
 export default function FixtureDetailPage({
   params,
@@ -78,12 +79,8 @@ async function FixtureDetail({ params }: FixtureDetailProps) {
           <DetailItem label="Kick-off" value={formatLondonTime(fixture.date)} />
           <DetailItem label="Venue" value={fixture.venue} />
           <DetailItem
-            label="Teams playing"
-            value={
-              fixture.teamsPlaying === 1
-                ? "1 team"
-                : `${fixture.teamsPlaying} teams`
-            }
+            label="Team"
+            value={formatTeamLabel(fixture.gender, fixture.teamNumber)}
           />
           <DetailItem
             label="Signup deadline"

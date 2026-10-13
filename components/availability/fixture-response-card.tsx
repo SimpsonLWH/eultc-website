@@ -3,12 +3,13 @@ import Card from "@/components/ui/card";
 import type { AvailabilityResponse } from "@/lib/db/models/availability-response";
 import type { Fixture } from "@/lib/db/models/fixture";
 import { formatLondonDateTime } from "@/lib/fixtures/datetime";
+import { formatTeamLabel } from "@/lib/fixtures/team-label";
 import FixtureResponseForm from "./fixture-response-form";
 
 type FixtureResponseCardProps = {
   fixtureId: string;
   fixture: Fixture;
-  eligibleTeams: number[];
+  eligible: boolean;
   savedResponse: AvailabilityResponse | null;
   locked: boolean;
 };
@@ -17,7 +18,7 @@ type FixtureResponseCardProps = {
 export default function FixtureResponseCard({
   fixtureId,
   fixture,
-  eligibleTeams,
+  eligible,
   savedResponse,
   locked,
 }: FixtureResponseCardProps) {
@@ -37,7 +38,7 @@ export default function FixtureResponseCard({
       </div>
 
       <p className="mt-4 text-sm leading-6 text-slate-600">
-        {fixture.teamsPlaying} {fixture.teamsPlaying === 1 ? "team" : "teams"} · Signup closes{" "}
+        {formatTeamLabel(fixture.gender, fixture.teamNumber)} · Signup closes{" "}
         {formatLondonDateTime(fixture.availabilityDeadline)}
       </p>
 
@@ -61,7 +62,7 @@ export default function FixtureResponseCard({
       ) : (
         <FixtureResponseForm
           fixtureId={fixtureId}
-          eligibleTeams={eligibleTeams}
+          eligible={eligible}
           savedStatus={savedResponse?.status ?? null}
           savedNote={savedResponse?.note ?? ""}
         />

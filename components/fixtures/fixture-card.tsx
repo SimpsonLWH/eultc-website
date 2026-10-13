@@ -4,6 +4,7 @@ import Badge from "@/components/ui/badge";
 import Card from "@/components/ui/card";
 import type { FixtureStatus, HomeOrAway } from "@/lib/db/models/fixture";
 import { formatLondonDateTime } from "@/lib/fixtures/datetime";
+import { formatTeamLabel } from "@/lib/fixtures/team-label";
 
 import FixtureStatusBadge from "./fixture-status-badge";
 
@@ -13,7 +14,8 @@ export type FixtureCardData = {
   date: Date;
   venue: string;
   homeOrAway: HomeOrAway;
-  teamsPlaying: number;
+  gender: "male" | "female";
+  teamNumber: number;
   availabilityDeadline: Date;
   status: FixtureStatus;
 };
@@ -30,8 +32,7 @@ export default function FixtureCard({
   fixture,
   showEditLink = false,
 }: FixtureCardProps) {
-  const teamLabel =
-    fixture.teamsPlaying === 1 ? "1 team" : `${fixture.teamsPlaying} teams`;
+  const teamLabel = formatTeamLabel(fixture.gender, fixture.teamNumber);
 
   return (
     <Card className="flex flex-col">

@@ -4,7 +4,8 @@ type SortableFixture = {
   date: Date;
   venue: string;
   homeOrAway: string;
-  teamsPlaying: number;
+  gender: string;
+  teamNumber: number;
   availabilityDeadline: Date;
   status: string;
 };
@@ -24,7 +25,8 @@ export function serializeFixture(fixture: SortableFixture) {
     date: fixture.date.toISOString(),
     venue: fixture.venue,
     homeOrAway: fixture.homeOrAway,
-    teamsPlaying: fixture.teamsPlaying,
+    gender: fixture.gender,
+    teamNumber: fixture.teamNumber,
     availabilityDeadline: fixture.availabilityDeadline.toISOString(),
     status: fixture.status,
   };

@@ -36,7 +36,8 @@ export default async function EditFixturePage({
     deadlineDate: formatLondonDateInput(fixture.availabilityDeadline),
     deadlineTime: formatLondonTimeInput(fixture.availabilityDeadline),
     homeOrAway: fixture.homeOrAway,
-    teamsPlaying: String(fixture.teamsPlaying),
+    gender: fixture.gender,
+    teamNumber: String(fixture.teamNumber),
     status: fixture.status,
   };
 

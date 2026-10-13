@@ -1,5 +1,9 @@
 import type { FixtureInput } from "@/lib/db/fixtures";
-import type { FixtureStatus, HomeOrAway } from "@/lib/db/models/fixture";
+import type {
+  FixtureStatus,
+  HomeOrAway,
+  TeamGender,
+} from "@/lib/db/models/fixture";
 
 import { londonWallTimeToUtc } from "./datetime";
 
@@ -9,6 +13,9 @@ const HOME_OR_AWAY_VALUES = [
   "home",
   "away",
 ] as const satisfies readonly HomeOrAway[];
+
+// Mirror the model enum while keeping this validation module independent of Mongoose.
+const TEAM_GENDER_VALUES = ["male", "female"] as const satisfies readonly TeamGender[];
 
 const FIXTURE_STATUS_VALUES = [
   "draft",
@@ -25,7 +32,8 @@ export type FixtureFormValues = {
   deadlineDate: string;
   deadlineTime: string;
   homeOrAway: string;
-  teamsPlaying: string;
+  gender: string;
+  teamNumber: string;
   status: string;
 };
 
@@ -45,7 +53,8 @@ export const emptyFixtureFormValues: FixtureFormValues = {
   deadlineDate: "",
   deadlineTime: "",
   homeOrAway: "home",
-  teamsPlaying: "",
+  gender: "male",
+  teamNumber: "1",
   status: "open",
 };
 
@@ -67,7 +76,8 @@ export function fixtureFormValuesFromFormData(
     deadlineDate: readText(formData, "deadlineDate"),
     deadlineTime: readText(formData, "deadlineTime"),
     homeOrAway: readText(formData, "homeOrAway"),
-    teamsPlaying: readText(formData, "teamsPlaying"),
+    gender: readText(formData, "gender"),
+    teamNumber: readText(formData, "teamNumber"),
     status: readText(formData, "status"),
   };
 }
@@ -121,12 +131,16 @@ export function validateFixtureForm(
     errors.deadlineTime = "The deadline must be before the match starts.";
   }
 
-  const teamsRaw = values.teamsPlaying.trim();
-  const teamsPlaying = /^\d+$/.test(teamsRaw)
-    ? Number(teamsRaw)
+  const teamNumberRaw = values.teamNumber.trim();
+  const teamNumber = /^\d+$/.test(teamNumberRaw)
+    ? Number(teamNumberRaw)
     : Number.NaN;
-  if (!Number.isInteger(teamsPlaying) || teamsPlaying < 1 || teamsPlaying > 10) {
-    errors.teamsPlaying = "Enter a whole number of teams between 1 and 10.";
+  if (!Number.isInteger(teamNumber) || teamNumber < 1 || teamNumber > 10) {
+    errors.teamNumber = "Enter a team number from 1 to 10.";
+  }
+
+  if (!(TEAM_GENDER_VALUES as readonly string[]).includes(values.gender)) {
+    errors.gender = "Choose men's or women's team.";
   }
 
   if (!(HOME_OR_AWAY_VALUES as readonly string[]).includes(values.homeOrAway)) {
@@ -149,7 +163,8 @@ export function validateFixtureForm(
       date: matchAt,
       availabilityDeadline: deadlineAt,
       homeOrAway: values.homeOrAway as HomeOrAway,
-      teamsPlaying,
+      gender: values.gender as TeamGender,
+      teamNumber,
       status: values.status as FixtureStatus,
     },
   };
