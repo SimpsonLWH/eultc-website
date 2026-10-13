@@ -133,6 +133,31 @@ async function main() {
       }))
     );
 
+    await PlayerModel.collection.bulkWrite([
+      ...players.map((player) => ({
+        updateOne: {
+          filter: { email: player.email },
+          update: { $set: { role: "player" } },
+          upsert: true,
+        },
+      })),
+      ...ADMINS.map((admin, index) => ({
+        updateOne: {
+          filter: { email: admin.email },
+          update: {
+            $set: {
+              ...admin,
+              email: admin.email,
+              role: "admin",
+              rankingPosition: players.length + index + 1,
+              isActive: false,
+            },
+          },
+          upsert: true,
+        },
+      })),
+    ]);
+
     await UserRoleModel.bulkWrite([
       ...players.map((player) => ({
         updateOne: {
