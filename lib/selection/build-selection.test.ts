@@ -10,6 +10,7 @@ import {
   type SelectionResult,
 } from "./build-selection";
 
+// Factories keep individual tests focused on the selection rule under test.
 function makePlayer(
   rankingPosition: number,
   overrides: Partial<SelectionPlayer> = {}
@@ -23,10 +24,12 @@ function makePlayer(
   };
 }
 
+// Generate a sequential ranking list for common capacity and eligibility cases.
 function makePlayers(count: number): SelectionPlayer[] {
   return Array.from({ length: count }, (_, index) => makePlayer(index + 1));
 }
 
+// Build explicit availability responses so test setup reads like a matchweek roster.
 function available(playerId: string): SelectionResponse {
   return { playerId, status: "available" };
 }
@@ -43,6 +46,7 @@ function slotsById(result: SelectionResult): (string | null)[][] {
   return result.teams.map((team) => team.slots.map((slot) => slot.playerId));
 }
 
+// Cover ranking, eligibility, short weeks, deterministic output, and the database-free boundary.
 describe("buildSelection", () => {
   it("fills teams by rank, strongest first (12 players, N=3)", () => {
     const players = makePlayers(12);

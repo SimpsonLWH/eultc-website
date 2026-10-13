@@ -1,3 +1,4 @@
+// Explain how an authenticated email can request access without creating a player row.
 export default function NotListedPage() {
   return (
     <section className="mx-auto max-w-xl rounded-md border border-slate-200 bg-white p-6 sm:p-8">

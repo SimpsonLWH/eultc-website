@@ -1,3 +1,4 @@
+// Central model exports for seed and database modules.
 export { PlayerModel, type Player } from "./player";
 export { UserRoleModel, USER_ROLES, type UserRole, type UserRoleDoc } from "./user-role";
 export {

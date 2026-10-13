@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { isDevLoginEnabled } from "@/lib/auth/config";
 import SignInForm from "./sign-in-form";
 
+// Keep the page shell static while deferring its request-specific session check.
 export default function SignInPage() {
   return (
     <Suspense fallback={<div aria-busy="true" className="min-h-64 rounded-md bg-white" />}>
@@ -14,6 +15,7 @@ export default function SignInPage() {
   );
 }
 
+// Auth.js reads request data, so run the check after the request-time boundary.
 async function SignInContent() {
   await connection();
 

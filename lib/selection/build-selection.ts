@@ -84,6 +84,7 @@ export function buildSelection({
   responses,
   teamsPlaying,
 }: BuildSelectionInput): SelectionResult {
+  // A Set deduplicates responses; any available answer makes a player eligible.
   const availablePlayerIds = new Set<string>();
   for (const response of responses) {
     if (response.status === "available") {
@@ -91,6 +92,7 @@ export function buildSelection({
     }
   }
 
+  // Filter and sort a new array so the caller's rankings list is never mutated.
   const eligible = players
     .filter((player) => player.isActive && availablePlayerIds.has(player.id))
     .sort(compareByRank);
@@ -101,6 +103,7 @@ export function buildSelection({
   const teams: SelectionTeam[] = [];
   let selected = 0;
 
+  // Fill each team completely before starting the next team's seed 1.
   for (let teamNumber = 1; teamNumber <= teamCount; teamNumber += 1) {
     const slots: SelectionSlot[] = [];
     for (let seed = 1; seed <= SEEDS_PER_TEAM; seed += 1) {
@@ -113,6 +116,7 @@ export function buildSelection({
     teams.push({ teamNumber, slots });
   }
 
+  // Report every empty position so short selection weeks are explicit to callers.
   const unfilledSlots = SEEDS_PER_TEAM * teamCount - selected;
 
   return { teams, incomplete: unfilledSlots > 0, unfilledSlots };

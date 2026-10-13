@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+// Give signed-in players a clear destination when they fail an admin role check.
 export default function ForbiddenPage() {
   return (
     <section className="mx-auto max-w-xl rounded-md border border-slate-200 bg-white p-6 sm:p-8">

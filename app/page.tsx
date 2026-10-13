@@ -4,6 +4,7 @@ import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Input from "@/components/ui/input";
 
+// These links are the dashboard's entry points into the club's main workflows.
 const workspaces = [
   {
     title: "Availability",
@@ -31,6 +32,7 @@ const workspaces = [
   },
 ];
 
+// Show the club overview and shortcuts to each workspace.
 export default function Home() {
   return (
     <div className="space-y-8">

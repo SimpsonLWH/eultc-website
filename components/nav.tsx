@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Keep destinations and compact mobile labels together so the nav stays consistent.
 const navigationItems = [
   { href: "/availability", label: "Availability", compactLabel: "Avail." },
   { href: "/selection", label: "Selection", compactLabel: "Select" },
@@ -10,6 +11,7 @@ const navigationItems = [
   { href: "/fixtures", label: "Fixtures", compactLabel: "Fixtures" },
 ];
 
+// Highlight the current route and shorten labels when the viewport is narrow.
 export default function Nav() {
   const pathname = usePathname();
 
@@ -17,6 +19,7 @@ export default function Nav() {
     <nav aria-label="Clubhouse" className="border-b border-slate-200 bg-white">
       <div className="mx-auto grid w-full max-w-6xl grid-cols-4 px-2 sm:px-6">
         {navigationItems.map((item) => {
+          // Exact matching avoids marking a sibling destination as active.
           const isActive = pathname === item.href;
 
           return (

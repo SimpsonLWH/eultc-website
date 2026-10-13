@@ -1,9 +1,11 @@
 import type { ButtonHTMLAttributes } from "react";
 
+// Preserve native button attributes while exposing the shared club variants.
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "quiet";
 };
 
+// Centralize button colors so actions stay consistent across pages.
 const variantClasses = {
   primary: "bg-club-700 text-white hover:bg-club-800 disabled:bg-club-300",
   secondary:
@@ -11,6 +13,7 @@ const variantClasses = {
   quiet: "text-club-700 hover:bg-club-50 disabled:text-slate-400",
 };
 
+// Default to a non-submitting button to avoid accidental form submissions.
 export default function Button({
   className = "",
   variant = "primary",

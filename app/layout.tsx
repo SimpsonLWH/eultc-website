@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "Edinburgh University Lawn Tennis Club availability, team selection, team sheets and fixtures.",
 };
 
+// Share the club shell while streaming session checks behind independent fallbacks.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Suspense
             fallback={<div aria-busy="true" className="min-h-48 rounded-md bg-white" />}
           >
+            {/* Show the not-listed state without embedding auth checks in each public page. */}
             <PlayerGate>{children}</PlayerGate>
           </Suspense>
         </main>

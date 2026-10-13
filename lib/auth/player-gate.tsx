@@ -2,11 +2,14 @@ import type { ReactNode } from "react";
 import { connection } from "next/server";
 import { getCurrentUser } from "./index";
 
+// Show an access explanation for unknown emails while anonymous shell routes remain public.
 export async function PlayerGate({ children }: { children: ReactNode }) {
+  // Auth.js reads request headers, so defer this check to the current request.
   await connection();
   const user = await getCurrentUser();
 
   if (user && !user.playerId) {
+    // Never create a roster entry from sign-in; a captain must add the player.
     return (
       <section
         aria-labelledby="not-listed-title"

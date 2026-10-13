@@ -5,11 +5,14 @@ import { serializeFixture } from "@/lib/db/serialize";
 
 const SCOPES: FixtureScope[] = ["upcoming", "past", "all"];
 
+// List fixtures using a validated scope query parameter.
 export async function GET(request: Request) {
+  // Keep URL-dependent API work out of the prerendered static shell.
   await connection();
 
   const requested = new URL(request.url).searchParams.get("scope") ?? "all";
   if (!SCOPES.includes(requested as FixtureScope)) {
+    // Reject unknown filters instead of silently returning misleading results.
     return NextResponse.json(
       { error: "scope must be one of upcoming, past, all" },
       { status: 400 }

@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes } from "react";
 
+// Reuse one accessible focus and sizing treatment for native input controls.
 export default function Input({
   className = "",
   ...props

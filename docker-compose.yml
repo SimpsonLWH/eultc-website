@@ -1,8 +1,10 @@
 services:
   mongo:
     image: mongo:latest
+    # Bind to loopback so this development database is not exposed on the network.
     ports:
       - "127.0.0.1:27017:27017"
+    # Persist local data across container restarts.
     volumes:
       - mongo-data:/data/db
 
@@ -12,6 +14,7 @@ services:
       - mongo
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/club_db
+      # The management UI is for trusted local development only.
       ME_CONFIG_BASICAUTH: "false"
     ports:
       - "127.0.0.1:8081:8081"

@@ -7,8 +7,10 @@ export type SignInState = {
   error?: string;
 } | null;
 
+// Keep server-side validation aligned with the browser's email input constraints.
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Validate the submitted address before calling Auth.js's development provider.
 export async function signInWithEmail(
   _previousState: SignInState,
   formData: FormData
@@ -23,6 +25,7 @@ export async function signInWithEmail(
   }
 
   try {
+    // Auth.js throws redirect signals as well as authentication errors; only map its errors to UI.
     await signIn("credentials", { email, redirectTo: "/" });
   } catch (error) {
     if (error instanceof AuthError) {
