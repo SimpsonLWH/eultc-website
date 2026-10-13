@@ -5,9 +5,11 @@ export {
   FixtureModel,
   FIXTURE_STATUSES,
   HOME_OR_AWAY,
+  TEAM_GENDERS,
   type Fixture,
   type FixtureStatus,
   type HomeOrAway,
+  type TeamGender,
 } from "./fixture";
 export {
   AvailabilityResponseModel,
