@@ -15,7 +15,7 @@
     "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
-    "mongoose": "^8.24.5",
+    "mongoose": "^9.11.2",
     "next": "16.4.0",
     "next-auth": "^5.0.0-beta.32",
     "react": "19.3.0",

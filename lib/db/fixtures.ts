@@ -1,4 +1,4 @@
-import mongoose, { type FilterQuery } from "mongoose";
+import mongoose, { type QueryFilter } from "mongoose";
 
 import { connectToDatabase } from "./connection";
 import {
@@ -33,7 +33,7 @@ export async function listFixtures(
 ) {
   await connectToDatabase();
   const now = new Date();
-  const filter: FilterQuery<Fixture> = {};
+  const filter: QueryFilter<Fixture> = {};
 
   if (!options.includeDrafts) {
     filter.status = { $ne: "draft" };
