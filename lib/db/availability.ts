@@ -17,7 +17,7 @@ export async function upsertAvailability(input: {
   return AvailabilityResponseModel.findOneAndUpdate(
     { playerId: input.playerId, fixtureId: input.fixtureId },
     { $set: { status: input.status, note: input.note ?? null } },
-    { new: true, upsert: true, setDefaultsOnInsert: true, runValidators: true }
+    { returnDocument: "after", upsert: true, setDefaultsOnInsert: true, runValidators: true }
   ).lean();
 }
 
