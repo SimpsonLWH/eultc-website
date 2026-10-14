@@ -33,7 +33,7 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 | T09 | Rankings page and admin ranking editor | M | T01, T02, T03 | Daniel | [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) |
 | T10 | Home dashboard and logged-out view | S | T04, T09 | Lewis | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) |
 | T11 | Deployment and CI | S | T01 | either | [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) |
-| T12 | Tooling cleanups and Node version | S | none | either | [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) |
+| T12 | Tooling cleanups and Node version | S | none | either | [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) (done, closed) |
 | T13 | Seed real data, QA pass and beta launch checklist | S | T04-T12 | both (joint) | [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) |
 
 Every ticket is independently mergeable and must leave the app deployable. Each issue links to its dependencies by issue URL; implementers should also read the ticket's Collision warning where one is present.
@@ -398,8 +398,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** open a trivial docs PR and watch checks plus preview; close it; merge a small real change and confirm the production deployment.
 
 ### T12 - Tooling cleanups and Node version
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Lewis
 - Type: chore
 - Size: S
 - Depends on: none
