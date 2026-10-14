@@ -24,6 +24,15 @@ Two developers (Lewis and Daniel) work on this repo in parallel. The ticket boar
 - Each ticket lists the files and folders it will create or edit in Touches. If two open tickets share a path, decide the order before starting both at once.
 - Keep PRs small and scoped to one ticket.
 
+## Branch protection
+
+`main` is protected on GitHub:
+
+- Pull requests are required; the `ci` check must pass before merging.
+- Direct pushes and force-pushes are blocked. Admins can override for emergencies.
+- Requiring branches to be up to date before merging is recommended, not enforced, so small PRs can merge without an extra rebase cycle.
+- Admins: Lewis (SimpsonLWH). Daniel (daniel-neyla) has write access and merges through PRs.
+
 ## Secrets
 
 - Never commit secrets. Use `.env.local`; keep `.env.example` up to date.

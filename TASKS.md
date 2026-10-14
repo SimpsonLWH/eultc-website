@@ -26,13 +26,13 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 | T02 | Data model and database setup | M | none | Lewis | [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) (done, closed) |
 | T03 | Authentication and roles | M | T01, T02 | Daniel | [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) (done, closed) |
 | T04 | Fixtures list, fixture detail and admin fixture forms | M | T01, T02 | Lewis | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) (done, closed) |
-| T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis | [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) |
+| T05 | Weekly availability form | M | T01, T02, T03, T04 | Lewis | [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) (done, closed) |
 | T06 | Response tracker (admin) | S | T05 | Daniel | [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) |
 | T07 | Ranked selection engine | M | T02 | Daniel | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) |
 | T08 | Live team sheet | M | T05, T07 | Lewis | [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) |
 | T09 | Rankings page and admin ranking editor | M | T01, T02, T03 | Daniel | [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) |
 | T10 | Home dashboard and logged-out view | S | T04, T09 | Lewis | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) |
-| T11 | Deployment and CI | S | T01 | either | [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) |
+| T11 | Deployment and CI | S | T01 | either | [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) (done, closed) |
 | T12 | Tooling cleanups and Node version | S | none | either | [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) (done, closed) |
 | T13 | Seed real data, QA pass and beta launch checklist | S | T04-T12 | both (joint) | [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) |
 
@@ -192,8 +192,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** as admin, create and edit a fixture with the seed database; check the list and detail pages; sign in as a player and confirm read-only; submit invalid values and check the errors.
 
 ### T05 - Weekly availability form
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Daniel
 - Type: feat
 - Size: M
 - Depends on: T01, T02, T03, T04
@@ -370,8 +370,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** sign out and check /; sign in as a player and check the cards; change an availability answer and confirm the dashboard reflects it on refresh.
 
 ### T11 - Deployment and CI
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Lewis
 - Type: chore
 - Size: S
 - Depends on: T01
