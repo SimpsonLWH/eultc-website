@@ -201,6 +201,17 @@ async function main() {
       isActive: true,
     }));
 
+    // Move existing ranks out of the way before resetting them. Without this,
+    // a bulk upsert can collide with the unique rankingPosition index after a
+    // captain has reordered the list in T09.
+    const highestRankedPlayer = await PlayerModel.findOne()
+      .sort({ rankingPosition: -1 })
+      .select({ rankingPosition: 1 })
+      .lean();
+    const rankingOffset =
+      (highestRankedPlayer?.rankingPosition ?? 0) + players.length + ADMINS.length + 1;
+    await PlayerModel.updateMany({}, { $inc: { rankingPosition: rankingOffset } });
+
     await PlayerModel.bulkWrite(
       players.map((player) => ({
         updateOne: {

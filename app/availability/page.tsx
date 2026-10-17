@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import FixtureResponseCard from "@/components/availability/fixture-response-card";
 import { requireUser } from "@/lib/auth";
-import { getPlayerById, listFixtures, listPlayerResponses } from "@/lib/db";
+import { getActivePlayerById, listFixtures, listPlayerResponses } from "@/lib/db";
 import { eligibleTeams } from "@/lib/availability/eligibility";
 
 // Keep request-specific session/database reads behind a streamed loading state.
@@ -26,7 +26,7 @@ async function AvailabilityContent() {
     redirect("/auth/not-listed");
   }
 
-  const player = await getPlayerById(playerId);
+  const player = await getActivePlayerById(playerId);
   if (!player) {
     redirect("/auth/not-listed");
   }
