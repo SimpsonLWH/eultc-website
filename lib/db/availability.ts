@@ -43,7 +43,6 @@ export async function listResponsesForFixtures(fixtureIds: string[]) {
     .sort({ updatedAt: 1 })
     .lean();
 }
-
 // Fetch a player's submitted responses for their availability history.
 export async function listPlayerResponses(playerId: string) {
   await connectToDatabase();

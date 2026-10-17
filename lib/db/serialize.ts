@@ -11,8 +11,7 @@ type SortableFixture = {
 };
 
 type SortablePlayer = {
-  id?: unknown;
-  _id?: unknown;
+  id: unknown;
   name: string;
   rankingPosition: number;
   email?: string;
@@ -36,7 +35,7 @@ export function serializeFixture(fixture: SortableFixture) {
 // Member-facing rankings intentionally omit email addresses.
 export function serializeRankedPlayer(player: SortablePlayer) {
   return {
-    id: String(player.id ?? player._id),
+    id: String(player.id),
     name: player.name,
     rankingPosition: player.rankingPosition,
   };
