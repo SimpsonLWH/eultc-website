@@ -1,8 +1,6 @@
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
-import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
-import Input from "@/components/ui/input";
 
 // These links are the dashboard's entry points into the club's main workflows.
 const workspaces = [
@@ -10,25 +8,21 @@ const workspaces = [
     title: "Availability",
     description: "Collect player responses for the next matchweek.",
     href: "/availability",
-    status: "Open",
   },
   {
     title: "Team selection",
     description: "Review the squad and prepare match lineups.",
     href: "/selection",
-    status: "Preparing",
   },
   {
     title: "Team sheet",
     description: "Publish and share the selected teams.",
     href: "/team-sheet",
-    status: "Draft",
   },
   {
     title: "Fixtures",
     description: "Keep the season schedule and results together.",
     href: "/fixtures",
-    status: "Season",
   },
 ];
 
@@ -52,18 +46,14 @@ export default function Home() {
             University Lawn Tennis Club.
           </p>
         </div>
-        <Button>New matchweek</Button>
       </section>
 
       <section aria-label="Club workspaces" className="grid gap-4 sm:grid-cols-2">
         {workspaces.map((workspace) => (
           <Card key={workspace.href} className="flex min-w-0 flex-col">
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="text-base font-semibold text-club-900">
-                {workspace.title}
-              </h2>
-              <Badge variant="neutral">{workspace.status}</Badge>
-            </div>
+            <h2 className="text-base font-semibold text-club-900">
+              {workspace.title}
+            </h2>
             <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">
               {workspace.description}
             </p>
@@ -76,33 +66,6 @@ export default function Home() {
           </Card>
         ))}
       </section>
-
-      <Card>
-        <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900">
-              Find a player
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-slate-600">
-              Player directory tools will be available when the workspace is
-              connected.
-            </p>
-            <label
-              htmlFor="home-player-search"
-              className="mt-4 block text-sm font-medium text-slate-700"
-            >
-              Player name
-            </label>
-            <Input
-              id="home-player-search"
-              className="mt-2"
-              placeholder="Search players"
-              type="search"
-            />
-          </div>
-          <Button variant="secondary">Browse directory</Button>
-        </div>
-      </Card>
     </div>
   );
 }

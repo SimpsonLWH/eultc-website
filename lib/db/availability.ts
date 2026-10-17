@@ -21,15 +21,6 @@ export async function upsertAvailability(input: {
   ).lean();
 }
 
-// Invalid ids return an empty list instead of reaching Mongoose's cast-error path.
-export async function listResponsesForFixture(fixtureId: string) {
-  await connectToDatabase();
-  if (!mongoose.isValidObjectId(fixtureId)) {
-    return [];
-  }
-  return AvailabilityResponseModel.find({ fixtureId }).sort({ updatedAt: 1 }).lean();
-}
-
 // Fetch a player's submitted responses for their availability history.
 export async function listPlayerResponses(playerId: string) {
   await connectToDatabase();
