@@ -313,7 +313,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** seed 8 available players with N=2 and compare /team-sheet against T07's expected output; change an answer in a player session and refresh; view as admin vs player to check the banner.
 
 ### T09 - Rankings page and admin ranking editor
-- Status: In progress
+- Status: Done
 - Owner: Lewis
 - Type: feat
 - Size: M

@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 
 import { requireUser } from "@/lib/auth";
 import { eligibleTeams } from "@/lib/availability/eligibility";
-import { getFixtureById, getPlayerById, upsertAvailability } from "@/lib/db";
+import {
+  getActivePlayerById,
+  getFixtureById,
+  upsertAvailability,
+} from "@/lib/db";
 import {
   AVAILABILITY_STATUSES,
   type AvailabilityStatus,
@@ -50,7 +54,7 @@ export async function saveAvailabilityAnswer(
 
   const [fixture, player] = await Promise.all([
     getFixtureById(fixtureId),
-    getPlayerById(playerId),
+    getActivePlayerById(playerId),
   ]);
 
   if (!fixture || !player) {
