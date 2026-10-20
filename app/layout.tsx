@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
@@ -10,8 +10,8 @@ import { SessionHeader } from "@/lib/auth/session-header";
 import { getCurrentUser } from "@/lib/auth";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -35,7 +35,7 @@ async function SessionMobileTabBar() {
 // Share the club shell while streaming session checks behind independent fallbacks.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-canvas text-ink">
         {/* Faint court-green wash: the floating chrome samples the page as it scrolls. */}
         <div

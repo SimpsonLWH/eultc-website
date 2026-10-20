@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import Badge from "@/components/ui/badge";
 import Card from "@/components/ui/card";
+import ImageFrame from "@/components/ui/image-frame";
 import type { FixtureStatus, HomeOrAway } from "@/lib/db/models/fixture";
 import { formatLondonDateTime } from "@/lib/fixtures/datetime";
 import { formatTeamLabel } from "@/lib/fixtures/team-label";
@@ -36,6 +37,7 @@ export default function FixtureCard({
 
   return (
     <Card className="flex flex-col">
+      <ImageFrame ratio="16/9" className="mb-4" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase text-muted">

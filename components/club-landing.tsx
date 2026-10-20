@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import ImageFrame from "@/components/ui/image-frame";
+
 // Semester 1 sessions, taken from the club's schedule posters.
 const weeklySchedule = [
   { day: "Monday", sessions: ["Social tennis · 17:30–19:30"] },
@@ -96,6 +98,10 @@ export default function ClubLanding() {
             Club links
           </a>
         </div>
+      </section>
+
+      <section aria-label="Club photo">
+        <ImageFrame ratio="3/1" />
       </section>
 
       <section aria-labelledby="schedule-title">
