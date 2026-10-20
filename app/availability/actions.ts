@@ -88,7 +88,11 @@ export async function saveAvailabilityAnswer(
     status,
     note: note || null,
   });
+  // A changed answer moves teams immediately: refresh the sheet, the
+  // dashboard and this page (the per-fixture sheet renders dynamically).
   revalidatePath("/availability");
+  revalidatePath("/team-sheet");
+  revalidatePath("/");
 
   return { message: "Availability saved.", status };
 }

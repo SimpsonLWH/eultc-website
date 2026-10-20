@@ -1,6 +1,26 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
+import { connection } from "next/server";
+
+import EmptyState from "@/components/team-sheet/empty-state";
+import MatchweekSheet, {
+  type PlayerDirectory,
+} from "@/components/team-sheet/matchweek-sheet";
 import { requireUser } from "@/lib/auth";
-import WorkspacePage from "@/components/workspace-page";
+import {
+  listFixtures,
+  listRankings,
+  listResponsesForFixtures,
+} from "@/lib/db";
+import {
+  buildMatchweekSelection,
+  groupFixturesIntoMatchweeks,
+  resolveDisplayMatchweek,
+} from "@/lib/selection/matchweek";
+
+export const metadata: Metadata = {
+  title: "Team sheet",
+};
 
 // Session-gated route: opt out of instant-navigation validation (Next 16,
 // Cache Components). The skeleton still streams, but the branch on the
@@ -24,14 +44,58 @@ export default function TeamSheetPage() {
 }
 
 async function TeamSheetContent() {
-  await requireUser();
+  await connection();
+  const user = await requireUser();
+
+  const [fixtures, players] = await Promise.all([
+    listFixtures("all"),
+    listRankings(),
+  ]);
+  const matchweek = resolveDisplayMatchweek(
+    groupFixturesIntoMatchweeks(fixtures)
+  );
+
+  if (!matchweek) {
+    return (
+      <EmptyState
+        title="No matchweeks yet"
+        description="The team sheet appears here once the captains publish a fixture. Check the fixture list for what's coming up."
+      />
+    );
+  }
+
+  const responses = await listResponsesForFixtures(
+    matchweek.fixtures.map((fixture) => String(fixture._id))
+  );
+  const selection = buildMatchweekSelection({
+    matchweek,
+    players: players.map((player) => ({
+      id: player.id,
+      name: player.name,
+      rankingPosition: player.rankingPosition,
+      isActive: player.isActive,
+    })),
+    responses: responses.map((response) => ({
+      playerId: String(response.playerId),
+      status: response.status,
+    })),
+  });
+  const playersById: PlayerDirectory = new Map(
+    players.map((player) => [
+      player.id,
+      { name: player.name, rankingPosition: player.rankingPosition },
+    ])
+  );
+  const now = new Date();
 
   return (
-    <WorkspacePage
-      title="Team sheet"
-      description="Review the selected lineup and share matchday team sheets."
-      sectionTitle="Published teams"
-      sectionDescription="Draft and published team sheets will appear here."
+    <MatchweekSheet
+      matchweek={matchweek}
+      selection={selection}
+      playersById={playersById}
+      currentPlayerId={user.playerId}
+      isAdmin={user.role === "admin"}
+      lastPlayed={matchweek.date.getTime() < now.getTime()}
     />
   );
 }
