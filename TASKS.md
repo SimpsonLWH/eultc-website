@@ -343,8 +343,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** as admin, move a player across a team boundary (rank 4 and 5) and check the team sheet swaps them; as a member, confirm no controls; call the action without admin rights and confirm rejection.
 
 ### T10 - Home dashboard and logged-out view
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Lewis
 - Type: feat
 - Size: S
 - Depends on: T04, T09
