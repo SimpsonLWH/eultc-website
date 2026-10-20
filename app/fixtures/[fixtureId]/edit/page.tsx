@@ -55,7 +55,7 @@ export default async function EditFixturePage({
         <h1 className="mt-4 text-2xl font-semibold text-club-950 sm:text-3xl">
           Edit fixture
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-muted">
           Update {fixture.opponent} or change the status to open, close or
           cancel signups. All dates and times are UK club time.
         </p>

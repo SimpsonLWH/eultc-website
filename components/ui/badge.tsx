@@ -2,14 +2,14 @@ import type { HTMLAttributes } from "react";
 
 // Keep status colors named so pages do not duplicate badge styling decisions.
 type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
-  variant?: "neutral" | "club" | "court";
+  variant?: "neutral" | "club" | "danger";
 };
 
 // Each key maps to a visual role from the club palette.
 const variantClasses = {
-  neutral: "bg-slate-100 text-slate-700",
+  neutral: "bg-surface-muted text-muted",
   club: "bg-club-50 text-club-800 ring-1 ring-inset ring-club-200",
-  court: "bg-rose-50 text-court-600 ring-1 ring-inset ring-rose-200",
+  danger: "bg-red-100 text-red-800 ring-1 ring-inset ring-red-200",
 };
 
 // A compact inline label for status, role, or category text.

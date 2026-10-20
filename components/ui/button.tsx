@@ -7,10 +7,11 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 // Centralize button colors so actions stay consistent across pages.
 const variantClasses = {
-  primary: "bg-club-700 text-white hover:bg-club-800 disabled:bg-club-300",
+  primary:
+    "glass-primary bg-club-700 text-white hover:bg-club-800 disabled:bg-club-300",
   secondary:
-    "border border-slate-300 bg-white text-club-800 hover:border-club-300 hover:bg-club-50 disabled:text-slate-400",
-  quiet: "text-club-700 hover:bg-club-50 disabled:text-slate-400",
+    "material-control text-club-800 hover:border-club-300 hover:bg-club-50 disabled:text-muted",
+  quiet: "text-club-700 hover:bg-club-700/10 disabled:text-muted",
 };
 
 // Default to a non-submitting button to avoid accidental form submissions.
@@ -23,7 +24,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`inline-flex min-h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600 disabled:cursor-not-allowed ${variantClasses[variant]} ${className}`}
+      className={`inline-flex min-h-10 items-center justify-center rounded-control squircle px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600 disabled:cursor-not-allowed ${variantClasses[variant]} ${className}`}
       {...props}
     />
   );

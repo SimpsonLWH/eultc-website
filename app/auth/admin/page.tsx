@@ -9,9 +9,9 @@ export default async function AdminPage() {
   const user = await requireAdmin();
 
   return (
-    <section className="rounded-md border border-slate-200 bg-white p-6">
+    <section className="rounded-surface squircle border border-line bg-surface p-6">
       <h1 className="text-2xl font-semibold text-club-950">Admin workspace</h1>
-      <p className="mt-3 text-sm text-slate-600">Signed in as {user.email}</p>
+      <p className="mt-3 text-sm text-muted">Signed in as {user.email}</p>
     </section>
   );
 }

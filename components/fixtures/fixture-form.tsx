@@ -64,7 +64,7 @@ export default function FixtureForm({
     <form action={formAction} className="space-y-5" noValidate>
       <div aria-live="polite">
         {hasErrors ? (
-          <p className="rounded-md bg-red-50 p-3 text-sm font-medium text-red-800">
+          <p className="rounded-surface squircle bg-red-50 p-3 text-sm font-medium text-red-800">
             Please fix the highlighted fields and try again.
           </p>
         ) : null}
@@ -115,7 +115,7 @@ export default function FixtureForm({
       </div>
 
       <fieldset className="space-y-4">
-        <legend className="text-sm font-medium text-slate-700">
+        <legend className="text-sm font-medium text-ink">
           Match date and time (UK club time)
         </legend>
         <div className="grid gap-5 sm:grid-cols-2">
@@ -141,7 +141,7 @@ export default function FixtureForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-sm font-medium text-slate-700">
+        <legend className="text-sm font-medium text-ink">
           Signup deadline (UK club time)
         </legend>
         <div className="grid gap-5 sm:grid-cols-2">
@@ -180,7 +180,7 @@ export default function FixtureForm({
         type="number"
       />
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-slate-200 pt-5">
+      <div className="flex flex-wrap items-center gap-4 border-t border-line pt-5">
         <Button disabled={pending} type="submit">
           {pending ? "Saving…" : submitLabel}
         </Button>
@@ -205,7 +205,7 @@ type FieldChromeProps = {
 function FieldChrome({ id, label, error, children }: FieldChromeProps) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor={id}>
+      <label className="mb-2 block text-sm font-medium text-ink" htmlFor={id}>
         {label}
       </label>
       {children}

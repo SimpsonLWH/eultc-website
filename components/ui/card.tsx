@@ -7,7 +7,7 @@ export default function Card({
 }: HTMLAttributes<HTMLElement>) {
   return (
     <section
-      className={`rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6 ${className}`}
+      className={`rounded-surface squircle border border-line bg-surface p-5 sm:p-6 ${className}`}
       {...props}
     />
   );

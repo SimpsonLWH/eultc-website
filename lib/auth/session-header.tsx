@@ -21,7 +21,7 @@ export async function SessionHeader() {
     return (
       <Link
         href="/sign-in"
-        className="inline-flex min-h-10 items-center rounded-md bg-club-700 px-4 text-sm font-semibold text-white hover:bg-club-800"
+        className="inline-flex min-h-10 items-center rounded-control squircle bg-club-700 px-4 text-sm font-semibold text-white hover:bg-club-800"
       >
         Sign in
       </Link>
@@ -30,14 +30,18 @@ export async function SessionHeader() {
 
   return (
     <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-      <span className="hidden max-w-40 truncate text-sm text-slate-600 sm:inline">
+      <span className="hidden max-w-40 truncate text-sm text-muted sm:inline">
         {user.name}
       </span>
-      <Badge variant={user.role === "admin" ? "court" : "club"}>
+      <Badge variant={user.role === "admin" ? "danger" : "club"}>
         {user.role ?? "Not listed"}
       </Badge>
       <form action={signOutAction}>
-        <Button className="px-2 sm:px-3" type="submit" variant="quiet">
+        <Button
+          className="px-2 whitespace-nowrap sm:px-3"
+          type="submit"
+          variant="quiet"
+        >
           Sign out
         </Button>
       </form>

@@ -28,7 +28,7 @@ export default function WorkspacePage({
           <h1 className="mt-2 text-2xl font-semibold text-club-950 sm:text-3xl">
             {title}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             {description}
           </p>
         </div>
@@ -41,10 +41,10 @@ export default function WorkspacePage({
         <Card>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-slate-900">
+              <h2 className="text-base font-semibold text-ink">
                 {sectionTitle}
               </h2>
-              <p className="mt-1 text-sm leading-6 text-slate-600">
+              <p className="mt-1 text-sm leading-6 text-muted">
                 {sectionDescription}
               </p>
             </div>
@@ -52,7 +52,7 @@ export default function WorkspacePage({
           </div>
           <label
             htmlFor="player-search"
-            className="mt-6 block text-sm font-medium text-slate-700"
+            className="mt-6 block text-sm font-medium text-ink"
           >
             Player search
           </label>
@@ -70,19 +70,19 @@ export default function WorkspacePage({
 
         <Card className="flex flex-col justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase text-slate-500">
+            <p className="text-xs font-semibold uppercase text-muted">
               Getting started
             </p>
             <h2 className="mt-2 text-lg font-semibold text-club-950">
               Ready for club data
             </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-muted">
               This area will show current season information once the club
               workspace is connected.
             </p>
           </div>
-          <div className="mt-6 border-t border-slate-100 pt-4">
-            <Badge variant="court">Setup pending</Badge>
+          <div className="mt-6 border-t border-line pt-4">
+            <Badge variant="danger">Setup pending</Badge>
           </div>
         </Card>
       </div>

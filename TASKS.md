@@ -56,8 +56,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 ## Tickets
 
 ### T01 - App shell, layout and design tokens
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: daniel-neyla
 - Type: chore
 - Size: S
 - Depends on: none

@@ -7,6 +7,11 @@ import { requireUser } from "@/lib/auth";
 import { getActivePlayerById, listFixtures, listPlayerResponses } from "@/lib/db";
 import { eligibleTeams } from "@/lib/availability/eligibility";
 
+// Session-gated route: opt out of instant-navigation validation (Next 16,
+// Cache Components). The skeleton still streams, but the branch on the
+// session cannot be rendered during validation.
+export const instant = false;
+
 // Keep request-specific session/database reads behind a streamed loading state.
 export default function AvailabilityPage() {
   return (
@@ -65,20 +70,20 @@ async function AvailabilityContent() {
         <h1 className="mt-2 text-2xl font-semibold text-club-950 sm:text-3xl">
           Weekly availability
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-muted">
           Tell the captains whether you can play each matchweek.
         </p>
-        <p className="mt-3 text-sm font-medium text-slate-700" aria-live="polite">
+        <p className="mt-3 text-sm font-medium text-ink" aria-live="polite">
           {openFixtures.length} open {openFixtures.length === 1 ? "fixture" : "fixtures"}, {" "}
           {answeredOpenCount} answered
         </p>
       </header>
 
       {openFixtures.length === 0 ? (
-        <section className="rounded-md border border-dashed border-slate-300 bg-white p-5">
+        <section className="rounded-surface squircle border border-dashed border-control bg-surface p-5">
           <h2 className="font-semibold text-club-950">No open signup right now</h2>
           {nextFixture ? (
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-muted">
               Next fixture: {nextFixture.opponent} on {formatFixtureDate(nextFixture.date)}. Its
               signup opening time has not been set.
             </p>
@@ -134,8 +139,8 @@ function formatFixtureDate(date: Date) {
 function AvailabilitySkeleton() {
   return (
     <div aria-busy="true" className="space-y-5">
-      <div className="h-24 max-w-2xl rounded-md bg-white" />
-      <div className="h-52 rounded-md bg-white" />
+      <div className="h-24 max-w-2xl rounded-surface squircle bg-surface" />
+      <div className="h-52 rounded-surface squircle bg-surface" />
     </div>
   );
 }

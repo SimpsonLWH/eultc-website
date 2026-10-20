@@ -32,15 +32,15 @@ export default function FixtureResponseForm({
   return (
     <form action={formAction} className="mt-5 space-y-4">
       <input type="hidden" name="fixtureId" value={fixtureId} />
-      <p className="text-sm leading-6 text-slate-600">Your answer is for this specific fixture team.</p>
+      <p className="text-sm leading-6 text-muted">Your answer is for this specific fixture team.</p>
       {!eligible ? (
-        <p className="text-sm font-medium text-slate-600" role="note">
+        <p className="text-sm font-medium text-muted" role="note">
           This fixture is for a lower-ranked team than your ranking allows.
         </p>
       ) : null}
 
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-slate-800">Can you play?</legend>
+        <legend className="text-sm font-semibold text-ink">Can you play?</legend>
         <div className="grid grid-cols-2 gap-3">
           {(["available", "unavailable"] as const).map((answer) => (
             <Button
@@ -59,10 +59,10 @@ export default function FixtureResponseForm({
         </div>
       </fieldset>
 
-      <label className="block text-sm font-medium text-slate-700" htmlFor={`note-${fixtureId}`}>
+      <label className="block text-sm font-medium text-ink" htmlFor={`note-${fixtureId}`}>
         Optional note
         <textarea
-          className="mt-2 min-h-20 w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-club-600 focus:outline-2 focus:outline-club-200"
+          className="mt-2 min-h-20 w-full resize-y rounded-control squircle border border-control bg-surface px-3 py-2 text-sm focus:border-club-600 focus:outline-2 focus:outline-club-200"
           id={`note-${fixtureId}`}
           maxLength={140}
           name="note"
