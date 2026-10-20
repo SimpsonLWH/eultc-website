@@ -30,6 +30,20 @@ export async function listResponsesForFixture(fixtureId: string) {
   return AvailabilityResponseModel.find({ fixtureId }).sort({ updatedAt: 1 }).lean();
 }
 
+// Fetch responses for every fixture in a matchweek in one query.
+export async function listResponsesForFixtures(fixtureIds: string[]) {
+  await connectToDatabase();
+  const validIds = fixtureIds.filter((fixtureId) =>
+    mongoose.isValidObjectId(fixtureId)
+  );
+  if (validIds.length === 0) {
+    return [];
+  }
+  return AvailabilityResponseModel.find({ fixtureId: { $in: validIds } })
+    .sort({ updatedAt: 1 })
+    .lean();
+}
+
 // Fetch a player's submitted responses for their availability history.
 export async function listPlayerResponses(playerId: string) {
   await connectToDatabase();

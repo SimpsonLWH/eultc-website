@@ -17,6 +17,7 @@ export {
 } from "./fixtures";
 export {
   listPlayerResponses,
+  listResponsesForFixtures,
   listResponsesForFixture,
   upsertAvailability,
 } from "./availability";

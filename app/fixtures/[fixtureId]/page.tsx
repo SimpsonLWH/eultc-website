@@ -98,14 +98,24 @@ async function FixtureDetail({ params }: FixtureDetailProps) {
         </dl>
       </Card>
 
-      {isAdmin ? (
-        <Link
-          className="inline-flex min-h-10 items-center justify-center rounded-surface squircle bg-club-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-club-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
-          href={`/fixtures/${fixtureId}/edit`}
-        >
-          Edit fixture
-        </Link>
-      ) : null}
+      <div className="flex flex-wrap gap-3">
+        {fixture.status !== "draft" ? (
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-surface squircle border border-line bg-surface px-4 text-sm font-semibold text-club-800 transition-colors hover:border-club-300 hover:bg-club-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
+            href={`/fixtures/${fixtureId}/team-sheet`}
+          >
+            View team sheet
+          </Link>
+        ) : null}
+        {isAdmin ? (
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-surface squircle bg-club-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-club-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
+            href={`/fixtures/${fixtureId}/edit`}
+          >
+            Edit fixture
+          </Link>
+        ) : null}
+      </div>
     </div>
   );
 }

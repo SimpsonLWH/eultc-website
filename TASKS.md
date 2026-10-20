@@ -282,8 +282,8 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 **How to test:** npm test; inspect the expected mapping in the 12-player test against the product rules by hand; run npm run lint and npm run build.
 
 ### T08 - Live team sheet
-- Status: Todo
-- Owner: unassigned
+- Status: Done
+- Owner: Lewis
 - Type: feat
 - Size: M
 - Depends on: T05, T07
