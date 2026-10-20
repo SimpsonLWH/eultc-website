@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import Badge from "@/components/ui/badge";
 import Card from "@/components/ui/card";
+import ImageFrame from "@/components/ui/image-frame";
 import type { CurrentUser } from "@/lib/auth";
 import {
   getPlayerById,
@@ -66,38 +67,47 @@ export default async function Dashboard({ user }: DashboardProps) {
       <section aria-label="Next fixture">
         <Card>
           {nextFixture ? (
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase text-muted">
-                  Next fixture · {formatTeamLabel(nextFixture.gender, nextFixture.teamNumber)}
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-club-950 sm:text-2xl">
-                  {nextFixture.opponent}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  {formatLondonDate(nextFixture.date)} · Kick-off{" "}
-                  {formatLondonTime(nextFixture.date)}
-                </p>
-                <p className="mt-1 text-sm text-muted">{nextFixture.venue}</p>
-                <p className="mt-3 text-sm text-muted">
-                  Signup closes {formatLondonDateTime(nextFixture.availabilityDeadline)}
-                </p>
-                <p className="mt-2">
-                  <DeadlineCountdown
-                    deadline={nextFixture.availabilityDeadline.toISOString()}
-                    open={isSignupOpen(nextFixture)}
-                  />
-                </p>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-2">
-                <Badge
-                  variant={nextFixture.homeOrAway === "home" ? "club" : "neutral"}
-                >
-                  {nextFixture.homeOrAway === "home" ? "Home" : "Away"}
-                </Badge>
-                <Badge variant={isSignupOpen(nextFixture) ? "club" : "neutral"}>
-                  {isSignupOpen(nextFixture) ? "Signup open" : "Signup closed"}
-                </Badge>
+            <div className="space-y-5">
+              <ImageFrame ratio="3/1" />
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase text-muted">
+                    Next fixture ·{" "}
+                    {formatTeamLabel(nextFixture.gender, nextFixture.teamNumber)}
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold text-club-950 sm:text-2xl">
+                    {nextFixture.opponent}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-muted">
+                    {formatLondonDate(nextFixture.date)} · Kick-off{" "}
+                    {formatLondonTime(nextFixture.date)}
+                  </p>
+                  <p className="mt-1 text-sm text-muted">{nextFixture.venue}</p>
+                  <p className="mt-3 text-sm text-muted">
+                    Signup closes{" "}
+                    {formatLondonDateTime(nextFixture.availabilityDeadline)}
+                  </p>
+                  <p className="mt-2">
+                    <DeadlineCountdown
+                      deadline={nextFixture.availabilityDeadline.toISOString()}
+                      open={isSignupOpen(nextFixture)}
+                    />
+                  </p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                  <Badge
+                    variant={
+                      nextFixture.homeOrAway === "home" ? "club" : "neutral"
+                    }
+                  >
+                    {nextFixture.homeOrAway === "home" ? "Home" : "Away"}
+                  </Badge>
+                  <Badge variant={isSignupOpen(nextFixture) ? "club" : "neutral"}>
+                    {isSignupOpen(nextFixture)
+                      ? "Signup open"
+                      : "Signup closed"}
+                  </Badge>
+                </div>
               </div>
             </div>
           ) : (
@@ -107,14 +117,16 @@ export default async function Dashboard({ user }: DashboardProps) {
             />
           )}
           {nextFixture ? (
-            <Link
-              className="mt-5 inline-flex min-h-10 items-center justify-center rounded-surface squircle bg-club-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-club-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
-              href="/availability"
-            >
-              {isSignupOpen(nextFixture)
-                ? "Set availability"
-                : "View availability"}
-            </Link>
+            <div className="mt-5">
+              <Link
+                className="inline-flex min-h-10 items-center justify-center rounded-surface squircle bg-club-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-club-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
+                href="/availability"
+              >
+                {isSignupOpen(nextFixture)
+                  ? "Set availability"
+                  : "View availability"}
+              </Link>
+            </div>
           ) : null}
         </Card>
       </section>

@@ -66,7 +66,7 @@ async function AvailabilityContent() {
   return (
     <div className="space-y-7">
       <header>
-        <p className="text-xs font-semibold uppercase text-club-700">Match operations</p>
+        <p className="text-xs font-semibold uppercase text-club-700">Clubhouse</p>
         <h1 className="mt-2 text-2xl font-semibold text-club-950 sm:text-3xl">
           Weekly availability
         </h1>

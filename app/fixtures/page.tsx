@@ -41,7 +41,7 @@ async function FixturesContent() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase text-club-700">
-            Match operations
+            Clubhouse
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-club-950 sm:text-3xl">
             Fixtures

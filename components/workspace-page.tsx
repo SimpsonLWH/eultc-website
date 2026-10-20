@@ -1,5 +1,4 @@
 import Badge from "@/components/ui/badge";
-import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Input from "@/components/ui/input";
 
@@ -23,7 +22,7 @@ export default function WorkspacePage({
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase text-club-700">
-            Match operations
+            Clubhouse
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-club-950 sm:text-3xl">
             {title}
@@ -32,9 +31,6 @@ export default function WorkspacePage({
             {description}
           </p>
         </div>
-        <Badge variant="club" className="self-start sm:self-auto">
-          Workspace preview
-        </Badge>
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(16rem,1fr)]">
@@ -48,7 +44,6 @@ export default function WorkspacePage({
                 {sectionDescription}
               </p>
             </div>
-            <Badge variant="neutral">Not live</Badge>
           </div>
           <label
             htmlFor="player-search"
@@ -62,10 +57,6 @@ export default function WorkspacePage({
             placeholder="Search players"
             type="search"
           />
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button>Open workspace</Button>
-            <Button variant="secondary">View details</Button>
-          </div>
         </Card>
 
         <Card className="flex flex-col justify-between">

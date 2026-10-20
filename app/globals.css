@@ -47,7 +47,7 @@
   --color-muted: var(--text-secondary);
   --color-line: var(--separator);
   --color-control: var(--control);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
 }
 
 /* Keep the application on the light palette until a full dark theme is defined. */
@@ -75,7 +75,7 @@ body {
   min-width: 320px;
   background-color: var(--canvas);
   color: var(--text);
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: "SF Pro Display", var(--font-inter), system-ui, sans-serif;
 }
 
 /* The only decorative background layer: broad, faint, static, non-interactive. */
