@@ -26,29 +26,29 @@ export default function FixtureResponseCard({
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase text-slate-500">
+          <p className="text-xs font-semibold uppercase text-muted">
             {formatLondonDateTime(fixture.date)}
           </p>
           <h2 className="mt-1 text-lg font-semibold text-club-950">{fixture.opponent}</h2>
-          <p className="mt-1 text-sm text-slate-600">{fixture.venue}</p>
+          <p className="mt-1 text-sm text-muted">{fixture.venue}</p>
         </div>
         <Badge variant={fixture.homeOrAway === "home" ? "club" : "neutral"}>
           {fixture.homeOrAway === "home" ? "Home" : "Away"}
         </Badge>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-slate-600">
+      <p className="mt-4 text-sm leading-6 text-muted">
         {formatTeamLabel(fixture.gender, fixture.teamNumber)} · Signup closes{" "}
         {formatLondonDateTime(fixture.availabilityDeadline)}
       </p>
 
       {locked ? (
-        <div className="mt-5 rounded-md bg-slate-50 p-4" role="status">
-          <p className="text-sm font-semibold text-slate-800">
+        <div className="mt-5 rounded-surface squircle bg-canvas p-4" role="status">
+          <p className="text-sm font-semibold text-ink">
             Signup locked{fixture.status === "cancelled" ? " · Fixture cancelled" : ""}
           </p>
           {savedResponse ? (
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-muted">
               You said {savedResponse.status}
               {savedResponse.updatedAt
                 ? `, updated ${formatLondonDateTime(savedResponse.updatedAt)}`
@@ -56,7 +56,7 @@ export default function FixtureResponseCard({
               {savedResponse.note ? `. Note: ${savedResponse.note}` : ""}.
             </p>
           ) : (
-            <p className="mt-1 text-sm text-slate-600">No answer was saved before signup closed.</p>
+            <p className="mt-1 text-sm text-muted">No answer was saved before signup closed.</p>
           )}
         </div>
       ) : (

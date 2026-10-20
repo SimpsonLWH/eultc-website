@@ -36,3 +36,17 @@ export async function signInWithEmail(
 
   return null;
 }
+
+// One-click development sign-in used by the quick buttons on the sign-in page.
+export async function quickSignIn(formData: FormData): Promise<void> {
+  if (!isDevLoginEnabled()) {
+    return;
+  }
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!emailPattern.test(email)) {
+    return;
+  }
+
+  await signIn("credentials", { email, redirectTo: "/" });
+}

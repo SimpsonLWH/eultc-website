@@ -26,7 +26,7 @@ export default async function NewFixturePage() {
         <h1 className="mt-4 text-2xl font-semibold text-club-950 sm:text-3xl">
           New fixture
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-muted">
           Add one fixture for a specific men&apos;s or women&apos;s team, choose home or
           away, and set the signup deadline. All dates and times are UK club time.
         </p>

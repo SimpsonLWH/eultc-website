@@ -8,11 +8,11 @@ const STATUS_LABELS: Record<FixtureStatus, string> = {
   cancelled: "Cancelled",
 };
 
-const STATUS_VARIANTS: Record<FixtureStatus, "neutral" | "club" | "court"> = {
+const STATUS_VARIANTS: Record<FixtureStatus, "neutral" | "club" | "danger"> = {
   draft: "neutral",
   open: "club",
   closed: "neutral",
-  cancelled: "court",
+  cancelled: "danger",
 };
 
 export default function FixtureStatusBadge({

@@ -38,13 +38,13 @@ export default function FixtureCard({
     <Card className="flex flex-col">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase text-slate-500">
+          <p className="text-xs font-semibold uppercase text-muted">
             {formatLondonDateTime(fixture.date)}
           </p>
           <h3 className="mt-1 text-base font-semibold text-club-950">
             {fixture.opponent}
           </h3>
-          <p className="mt-1 text-sm text-slate-600">{fixture.venue}</p>
+          <p className="mt-1 text-sm text-muted">{fixture.venue}</p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
           <Badge variant={fixture.homeOrAway === "home" ? "club" : "neutral"}>
@@ -54,7 +54,7 @@ export default function FixtureCard({
         </div>
       </div>
 
-      <p className="mt-4 flex-1 text-sm leading-6 text-slate-600">
+      <p className="mt-4 flex-1 text-sm leading-6 text-muted">
         {teamLabel} · Signup closes{" "}
         {formatLondonDateTime(fixture.availabilityDeadline)}
       </p>

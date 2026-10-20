@@ -1,29 +1,189 @@
 @import "tailwindcss";
 
+/*
+ * EULTC club palette. The club-* scale is sampled from the EULTC crest ring:
+ * deep club green, white and near-black silhouettes. These values are the
+ * source of truth for club branding — do not repoint the scale at another hue
+ * without a brand decision.
+ */
+@theme {
+  --color-club-50: #f6f8f6;
+  --color-club-100: #eaf1eb;
+  --color-club-200: #d8e5dc;
+  --color-club-300: #b4cdbc;
+  --color-club-400: #86a993;
+  --color-club-500: #568066;
+  --color-club-600: #2c5436;
+  --color-club-700: #1b3720;
+  --color-club-800: #122616;
+  --color-club-900: #0f2013;
+  --color-club-950: #0d1d11;
+  /* Poster cream: the club's display accent on deep green. */
+  --color-cream: #f3edc8;
+
+  /* Shape: controls, content surfaces and floating glass chrome. */
+  --radius-control: 0.75rem;
+  --radius-surface: 0.875rem;
+  --radius-float: 1.25rem;
+}
+
+/*
+ * Apple-style continuous corners where the browser supports superellipses
+ * (Chrome 139+). Other browsers simply keep the plain border radius.
+ */
+@utility squircle {
+  corner-shape: squircle;
+}
+
+/*
+ * Semantic tokens resolve through the palette variables below, so utilities
+ * such as bg-surface, text-muted or border-line stay themeable in one place.
+ */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--text);
+  --color-muted: var(--text-secondary);
+  --color-line: var(--separator);
+  --color-control: var(--control);
+  --font-sans: var(--font-geist-sans);
+}
+
 /* Keep the application on the light palette until a full dark theme is defined. */
 :root {
   color-scheme: light;
-}
 
-/* Tailwind derives utilities such as bg-club-700 and text-court-600 from these tokens. */
-@theme inline {
-  --color-club-50: #f0f6fb;
-  --color-club-100: #dceaf5;
-  --color-club-200: #bdd7eb;
-  --color-club-300: #8ebbdc;
-  --color-club-400: #5997c4;
-  --color-club-500: #3478a8;
-  --color-club-600: #245f8a;
-  --color-club-700: #1d4c70;
-  --color-club-800: #193f5d;
-  --color-club-900: #17364f;
-  --color-club-950: #0d2234;
-  --color-court-500: #bd3549;
-  --color-court-600: #a5263a;
-  --font-sans: var(--font-geist-sans);
+  --canvas: #f6f8f6;
+  --surface: #ffffff;
+  --surface-muted: #edf1ee;
+  --text: #121a14;
+  --text-secondary: #5b6660;
+  --separator: #e2e8e3;
+  --control: #c3d0c7;
+
+  --wash: rgb(44 84 54 / 0.05);
+  --glass-nav-fill: rgb(255 255 255 / 0.78);
+  --glass-control-fill: rgb(255 255 255 / 0.66);
+  --glass-edge: rgb(24 33 29 / 0.1);
+  --glass-highlight: rgb(255 255 255 / 0.9);
+  --glass-shadow:
+    0 2px 5px rgb(19 35 27 / 0.04), 0 14px 34px rgb(19 35 27 / 0.08);
 }
 
 body {
   min-width: 320px;
+  background-color: var(--canvas);
+  color: var(--text);
   font-family: var(--font-geist-sans), sans-serif;
+}
+
+/* The only decorative background layer: broad, faint, static, non-interactive. */
+.shell-wash {
+  background-image: radial-gradient(
+    80rem 36rem at 50% -16rem,
+    var(--wash),
+    transparent 70%
+  );
+}
+
+/*
+ * Glass chrome. Only the floating header and the bottom tab bar use the
+ * material; content surfaces stay opaque. Opaque at rest, translucent only
+ * where backdrop-filter is supported, and opaque again for reduce-transparency,
+ * higher-contrast and forced-colours.
+ */
+.material-nav {
+  background-color: var(--surface);
+  border: 1px solid var(--separator);
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .material-nav {
+    background-color: var(--glass-nav-fill);
+    border-color: var(--glass-edge);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      var(--glass-shadow);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-nav {
+    background-color: var(--surface);
+    border-color: var(--separator);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material-nav {
+    background-color: var(--surface);
+    border-color: var(--text);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .shell-wash {
+    background-image: none;
+  }
+
+  .material-nav {
+    background-color: Canvas;
+    border-color: CanvasText;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+
+/*
+ * Glass controls: secondary and quiet buttons use the same material language
+ * as the chrome so actions read as part of the shell rather than flat blocks.
+ */
+.material-control {
+  background-color: var(--surface);
+  border: 1px solid var(--separator);
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .material-control {
+    background-color: var(--glass-control-fill);
+    border-color: var(--glass-edge);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    backdrop-filter: blur(14px) saturate(130%);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-control {
+    background-color: var(--surface);
+    border-color: var(--separator);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .material-control {
+    background-color: Canvas;
+    border-color: CanvasText;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+
+/* The pressed-glass top highlight for solid primary actions. */
+.glass-primary {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16);
 }

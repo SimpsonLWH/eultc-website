@@ -15,7 +15,7 @@ export default function SignInForm({ enabled }: { enabled: boolean }) {
   // Do not render a credential form when the provider is unavailable in production.
   if (!enabled) {
     return (
-      <p className="rounded-md bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+      <p className="rounded-surface squircle bg-canvas p-4 text-sm leading-6 text-muted">
         Email sign-in is not enabled in this environment.
       </p>
     );
@@ -24,7 +24,7 @@ export default function SignInForm({ enabled }: { enabled: boolean }) {
   return (
     <form action={action} className="space-y-4">
       <div>
-        <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-ink">
           Email address
         </label>
         <Input
@@ -45,7 +45,7 @@ export default function SignInForm({ enabled }: { enabled: boolean }) {
       <Button className="w-full" disabled={pending} type="submit">
         {pending ? "Signing in…" : "Continue with email"}
       </Button>
-      <p className="text-xs leading-5 text-slate-500">
+      <p className="text-xs leading-5 text-muted">
         Development login creates a local session; no email is sent. Use an email seeded in the
         player list.
       </p>
