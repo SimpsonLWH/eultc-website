@@ -8,15 +8,13 @@ import MatchweekSheet, {
 } from "@/components/team-sheet/matchweek-sheet";
 import { requireUser } from "@/lib/auth";
 import {
-  listFixtures,
   listRankings,
   listResponsesForFixtures,
 } from "@/lib/db";
 import {
   buildMatchweekSelection,
-  groupFixturesIntoMatchweeks,
-  resolveDisplayMatchweek,
 } from "@/lib/selection/matchweek";
+import { loadDisplayMatchweek } from "@/lib/team-sheet/load";
 
 export const metadata: Metadata = {
   title: "Team sheet",
@@ -47,15 +45,12 @@ async function TeamSheetContent() {
   await connection();
   const user = await requireUser();
 
-  const [fixtures, players] = await Promise.all([
-    listFixtures("all"),
+  const [display, players] = await Promise.all([
+    loadDisplayMatchweek(),
     listRankings(),
   ]);
-  const matchweek = resolveDisplayMatchweek(
-    groupFixturesIntoMatchweeks(fixtures)
-  );
 
-  if (!matchweek) {
+  if (!display) {
     return (
       <EmptyState
         title="No matchweeks yet"
@@ -64,6 +59,7 @@ async function TeamSheetContent() {
     );
   }
 
+  const { matchweek, lastPlayed } = display;
   const responses = await listResponsesForFixtures(
     matchweek.fixtures.map((fixture) => String(fixture._id))
   );
@@ -86,7 +82,6 @@ async function TeamSheetContent() {
       { name: player.name, rankingPosition: player.rankingPosition },
     ])
   );
-  const now = new Date();
 
   return (
     <MatchweekSheet
@@ -95,7 +90,7 @@ async function TeamSheetContent() {
       playersById={playersById}
       currentPlayerId={user.playerId}
       isAdmin={user.role === "admin"}
-      lastPlayed={matchweek.date.getTime() < now.getTime()}
+      lastPlayed={lastPlayed}
     />
   );
 }

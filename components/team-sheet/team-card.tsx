@@ -3,7 +3,8 @@ import Card from "@/components/ui/card";
 import { formatLondonTime } from "@/lib/fixtures/datetime";
 import { formatTeamLabel } from "@/lib/fixtures/team-label";
 import type { SelectionTeam } from "@/lib/selection/build-selection";
-import type { FixtureWithId, PlayerDirectory } from "./matchweek-sheet";
+import type { FixtureWithId } from "@/lib/selection/matchweek";
+import type { PlayerDirectory } from "./matchweek-sheet";
 
 type TeamCardProps = {
   fixture: FixtureWithId;

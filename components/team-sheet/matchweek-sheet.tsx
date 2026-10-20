@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import Badge from "@/components/ui/badge";
 import Card from "@/components/ui/card";
-import type { Fixture } from "@/lib/db/models/fixture";
 import { formatLondonDate } from "@/lib/fixtures/datetime";
 import { formatTeamLabel } from "@/lib/fixtures/team-label";
 import {
@@ -10,6 +9,7 @@ import {
   type SelectionTeam,
 } from "@/lib/selection/build-selection";
 import type {
+  FixtureWithId,
   Matchweek,
   MatchweekSelection,
 } from "@/lib/selection/matchweek";
@@ -19,9 +19,6 @@ export type PlayerDirectory = Map<
   string,
   { name: string; rankingPosition: number }
 >;
-
-// Mongoose lean documents carry the persisted id alongside the schema fields.
-export type FixtureWithId = Fixture & { _id: unknown };
 
 type MatchweekSheetProps = {
   matchweek: Matchweek<FixtureWithId>;

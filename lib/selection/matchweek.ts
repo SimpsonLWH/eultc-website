@@ -7,6 +7,7 @@ import {
   type SelectionResponse,
   type SelectionResult,
 } from "./build-selection";
+import type { Fixture } from "../db/models/fixture";
 
 /**
  * T08 - matchweek rules.
@@ -41,6 +42,9 @@ export type MatchweekSelection = {
   availablePlayerCount: number;
   unavailablePlayerCount: number;
 };
+
+/** A persisted fixture document: schema fields plus its stored id. */
+export type FixtureWithId = Fixture & { _id: unknown };
 
 /** Grouping key uses the London wall-clock date, not the UTC date. */
 export function matchweekKey(date: Date, gender: TeamGender): string {
