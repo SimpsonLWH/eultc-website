@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isDevLoginEnabled } from "./dev-login";
+import { getDevLoginPassword, isDevLoginEnabled } from "./dev-login";
 
 describe("isDevLoginEnabled", () => {
   it("allows credentials during local development", () => {
@@ -31,5 +31,12 @@ describe("isDevLoginEnabled", () => {
         AUTH_DEV_LOGIN: "true",
       })
     ).toBe(false);
+  });
+
+  it("uses a server-only development password", () => {
+    expect(getDevLoginPassword({ AUTH_DEV_PASSWORD: " dev-password " })).toBe(
+      "dev-password"
+    );
+    expect(getDevLoginPassword({})).toBe("eultc-dev-password");
   });
 });

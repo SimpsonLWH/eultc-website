@@ -15,6 +15,10 @@ export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+export function isValidEmail(email: string): boolean {
+  return emailPattern.test(normalizeEmail(email));
+}
+
 export function parseMembershipEmails(input: string): {
   emails: string[];
   invalid: string[];

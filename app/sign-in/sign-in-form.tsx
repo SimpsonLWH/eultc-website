@@ -1,25 +1,16 @@
 "use client";
 
 import { useActionState } from "react";
+
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import { signInWithEmail, type SignInState } from "./actions";
+import { signInWithPassword, type SignInState } from "./actions";
 
-// Bind the server action to a small client form so pending and error states update immediately.
-export default function SignInForm({ enabled }: { enabled: boolean }) {
+export default function SignInForm() {
   const [state, action, pending] = useActionState<SignInState, FormData>(
-    signInWithEmail,
+    signInWithPassword,
     null
   );
-
-  // Do not render a credential form when the provider is unavailable in production.
-  if (!enabled) {
-    return (
-      <p className="rounded-surface squircle bg-canvas p-4 text-sm leading-6 text-muted">
-        Email sign-in is not enabled in this environment.
-      </p>
-    );
-  }
 
   return (
     <form action={action} className="space-y-4">
@@ -30,11 +21,28 @@ export default function SignInForm({ enabled }: { enabled: boolean }) {
         <Input
           autoComplete="email"
           autoFocus
+          defaultValue={state?.email}
           id="email"
           name="email"
           placeholder="name@example.com"
           required
           type="email"
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="password"
+          className="mb-2 block text-sm font-medium text-ink"
+        >
+          Password
+        </label>
+        <Input
+          autoComplete="current-password"
+          id="password"
+          minLength={12}
+          name="password"
+          required
+          type="password"
         />
       </div>
       {state?.error ? (
@@ -43,11 +51,11 @@ export default function SignInForm({ enabled }: { enabled: boolean }) {
         </p>
       ) : null}
       <Button className="w-full" disabled={pending} type="submit">
-        {pending ? "Signing in…" : "Continue with email"}
+        {pending ? "Signing in…" : "Sign in"}
       </Button>
       <p className="text-xs leading-5 text-muted">
-        Development login creates a local session; no email is sent. Use an email seeded in the
-        player list.
+        Forgotten your password? Ask a captain to generate a one-time reset
+        link.
       </p>
     </form>
   );
