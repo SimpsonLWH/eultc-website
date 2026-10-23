@@ -1,14 +1,17 @@
-import { connection } from "next/server";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import Badge from "@/components/ui/badge";
 import Button from "@/components/ui/button";
 import { getCurrentUser } from "./index";
-import { signOut } from "./config";
+import { auth } from "./config";
 
-// Clear the Auth.js session and return the user to the sign-in page.
+// Clear the Better Auth session and return the user to the sign-in page.
 async function signOutAction() {
   "use server";
-  await signOut({ redirectTo: "/sign-in" });
+  await auth.api.signOut({ headers: await headers() });
+  redirect("/sign-in");
 }
 
 // Render the identity from the server session, or a sign-in link for anonymous visitors.

@@ -1,53 +1,47 @@
 import "server-only";
 
 import { cache } from "react";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+
+import { getPlayerByEmail } from "@/lib/db";
+import { isPaidMember } from "@/lib/membership";
 import { auth } from "./config";
+import {
+  evaluateMemberAccess,
+  projectCurrentUser,
+  type CurrentUser,
+} from "./user-projection";
 
-// Narrow the Auth.js session to the fields the app needs for access decisions.
-export type CurrentUser = {
-  id: string;
-  email: string;
-  name: string;
-  playerId: string | null;
-  role: "player" | "admin" | null;
-};
+export type { CurrentUser } from "./user-projection";
 
-// React cache deduplicates session reads during a single server render.
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
-  const session = await auth();
-  if (!session?.user?.email || !session.user.id) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) {
     return null;
   }
 
-  const email = session.user.email.trim().toLowerCase();
-
-  return {
-    id: session.user.id,
-    email,
-    name: session.user.name ?? email,
-    playerId: session.user.playerId,
-    role: session.user.role,
-  };
+  const player = await getPlayerByEmail(session.user.email);
+  const user = projectCurrentUser(session.user, player);
+  const access = evaluateMemberAccess(user, await isPaidMember(user.email));
+  return access.allowed ? user : null;
 });
 
-// Require an authenticated session that also maps to a player record.
 export async function requireUser(): Promise<CurrentUser> {
-  // Mark auth as request-time work under Next 16 Cache Components.
   await connection();
   const user = await getCurrentUser();
   if (!user) {
     redirect("/sign-in");
   }
   if (!user.playerId) {
-    // An unknown email is an onboarding state, not an authentication error.
     redirect("/auth/not-listed");
   }
   return user;
 }
 
-// Apply the stricter role check only after the ordinary player check succeeds.
 export async function requireAdmin(): Promise<CurrentUser> {
   const user = await requireUser();
   if (user.role !== "admin") {
