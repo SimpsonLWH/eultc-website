@@ -4,13 +4,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ```bash
 npm install
-cp .env.example .env.local   # add your MongoDB connection string
-npm run db:seed              # 36 players, 2 admins, 3 fixtures (safe to re-run)
+cp .env.example .env.local   # add MongoDB and Better Auth values
+npm run db:seed              # players, admins, auth accounts and fixtures
 npm run dev
 ```
 
 - The database is MongoDB via Mongoose. Use a MongoDB Atlas free cluster for shared data; any local mongod connection string also works. No Docker required.
 - `MONGODB_URI` is read from `.env.local`, which is never committed.
+- Local sign-up uses a shared invite plus the temporary paid-email list. Seeded quick-login accounts use `AUTH_DEV_PASSWORD` (default: `eultc-dev-password`).
+- For a new production admin, provision the email and print the current invite with `npm run auth:bootstrap -- --email captain@example.com --name "Club Captain"`, then self-register through that link.
 - JSON API: `/api/health`, `/api/fixtures?scope=upcoming|past|all`, `/api/fixtures/[fixtureId]`, `/api/rankings`.
 
 ## Planning

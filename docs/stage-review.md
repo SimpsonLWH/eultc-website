@@ -82,3 +82,8 @@ should land inside the T10/T08/T09 work.
    standalone ticket after M1, before T08/T09/T10 build more UI on the session
    shape.
 5. Adopt TypeScript 7 once typescript-eslint supports the TS 7.1 API (#38).
+
+**2026-10-23 update:** The Better Auth migration (#37) is implemented on the
+current branch with email/password, invite registration, a temporary paid-email
+allowlist and captain-generated recovery links. It does not yet use EUSU
+membership data or send email.

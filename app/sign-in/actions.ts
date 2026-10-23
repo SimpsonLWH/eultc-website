@@ -1,52 +1,75 @@
 "use server";
 
-import { AuthError } from "next-auth";
-import { isDevLoginEnabled, signIn } from "@/lib/auth/config";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { isAPIError } from "better-auth/api";
+
+import { auth } from "@/lib/auth/config";
+import {
+  getDevLoginPassword,
+  isDevLoginEnabled,
+} from "@/lib/auth/dev-login";
+import { parseSignInForm } from "@/lib/auth/form-values";
+import { isValidEmail } from "@/lib/membership/policy";
 
 export type SignInState = {
+  email?: string;
   error?: string;
 } | null;
 
-// Keep server-side validation aligned with the browser's email input constraints.
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const GENERIC_SIGN_IN_ERROR = "Unable to sign in with those details.";
 
-// Validate the submitted address before calling Auth.js's development provider.
-export async function signInWithEmail(
+export async function signInWithPassword(
   _previousState: SignInState,
   formData: FormData
 ): Promise<SignInState> {
-  if (!isDevLoginEnabled()) {
-    return { error: "Development email sign-in is disabled in this environment." };
-  }
-
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!emailPattern.test(email)) {
-    return { error: "Enter a valid email address." };
+  const values = parseSignInForm(formData);
+  if (!isValidEmail(values.email) || !values.password) {
+    return { email: values.email, error: GENERIC_SIGN_IN_ERROR };
   }
 
   try {
-    // Auth.js throws redirect signals as well as authentication errors; only map its errors to UI.
-    await signIn("credentials", { email, redirectTo: "/" });
+    await auth.api.signInEmail({
+      body: {
+        email: values.email,
+        password: values.password,
+        rememberMe: true,
+      },
+      headers: await headers(),
+    });
   } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: "We couldn’t sign you in. Check the email and try again." };
+    if (isAPIError(error)) {
+      return {
+        email: values.email,
+        error:
+          error.message === "Unable to sign in with those details."
+            ? error.message
+            : GENERIC_SIGN_IN_ERROR,
+      };
     }
-    throw error;
+    return { email: values.email, error: GENERIC_SIGN_IN_ERROR };
   }
 
-  return null;
+  redirect("/");
 }
 
-// One-click development sign-in used by the quick buttons on the sign-in page.
 export async function quickSignIn(formData: FormData): Promise<void> {
   if (!isDevLoginEnabled()) {
-    return;
+    redirect("/sign-in");
   }
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!emailPattern.test(email)) {
-    return;
+  if (!isValidEmail(email)) {
+    redirect("/sign-in");
   }
 
-  await signIn("credentials", { email, redirectTo: "/" });
+  await auth.api.signInEmail({
+    body: {
+      email,
+      password: getDevLoginPassword(),
+      rememberMe: true,
+    },
+    headers: await headers(),
+  });
+  redirect("/");
 }

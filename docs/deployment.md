@@ -16,8 +16,10 @@ The app deploys on Vercel from `SimpsonLWH/eultc-website`. Production tracks
 | Variable | Required | Source | Applies to |
 | --- | --- | --- | --- |
 | `MONGODB_URI` | Yes | MongoDB Atlas console (connection string) | Production scope uses the `prod` database; preview scope and local `.env.local` use `dev`. |
-| `AUTH_SECRET` | Yes | `openssl rand -base64 32` | Production and preview Vercel scopes, plus `.env.local` locally. |
-| `AUTH_DEV_LOGIN` | No | Set to `true` to force the credentials dev sign-in on | Local and preview testing only; never enable in production. |
+| `BETTER_AUTH_SECRET` | Yes | `openssl rand -base64 32` | Production and preview Vercel scopes, plus `.env.local` locally. Must be at least 32 characters. |
+| `BETTER_AUTH_URL` | Yes | The environment's canonical URL | `https://eultc-website.vercel.app` in Production and the current preview URL in Preview. |
+| `AUTH_DEV_LOGIN` | No | Set to `true` to enable seeded quick sign-in | Vercel Preview only. Local development enables it automatically; Production ignores it. |
+| `AUTH_DEV_PASSWORD` | No | Choose a local-only password | Local and Preview seeded accounts. Defaults to `eultc-dev-password`. |
 
 Set values in the Vercel project settings (Settings -> Environment Variables),
 scoped to production and preview separately. Never commit `.env.local`;
@@ -38,9 +40,25 @@ scoped to production and preview separately. Never commit `.env.local`;
 - `GET /api/health` returns `{"ok":true,"database":"connected"}` when the app
   can reach MongoDB.
 - `GET /api/rankings` returns JSON from the seeded database.
+- Invite registration requires the current admin-generated registration link and a paid email. The temporary paid list is managed at `/members`.
 - Data-backed pages (for example /fixtures and /availability) stream a static
   shell first. If the shell stays an empty skeleton, check the database
   connection before anything else.
+- Response headers include a Content Security Policy, clickjacking protection
+  and MIME sniffing protection across every route.
+
+## Auth operations
+
+- First captain: run
+  `npm run auth:bootstrap -- --email captain@example.com --name "Club Captain"`.
+  This adds the email to the admin role allowlist, creates the shared invite
+  if needed, and prints the registration URL. The captain then self-registers.
+- Paid list: add EUSU-paid emails at `/members`. Removing an email immediately
+  revokes non-admin sessions.
+- Password recovery: an admin generates a single-use link at `/members`. The
+  link expires after one hour and is shown only once.
+- There is intentionally no outbound email provider. Members request a reset
+  link from a captain.
 
 ## Incident log
 

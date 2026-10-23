@@ -62,7 +62,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 />
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-semibold text-club-900">
-                    Edinburgh University
+                    <span className="sm:hidden">EULTC</span>
+                    <span className="hidden sm:inline">Edinburgh University</span>
                   </span>
                   <span className="hidden truncate text-xs text-muted min-[400px]:block">
                     Lawn Tennis Club
