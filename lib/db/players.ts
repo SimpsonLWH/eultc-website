@@ -11,15 +11,6 @@ export async function listRankings() {
   return partitionRankingAccounts(accounts).active;
 }
 
-// Resolve a player by Mongo id after rejecting malformed ids.
-export async function getPlayerById(id: string) {
-  await connectToDatabase();
-  if (!mongoose.isValidObjectId(id)) {
-    return null;
-  }
-  return PlayerModel.findById(id).lean();
-}
-
 // Availability and team workflows should treat deactivated members as absent.
 export async function getActivePlayerById(id: string) {
   await connectToDatabase();

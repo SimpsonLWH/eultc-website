@@ -12,9 +12,3 @@ export async function getUserRoleByEmail(email: string) {
   await connectToDatabase();
   return UserRoleModel.findOne({ email: email.toLowerCase().trim() }).lean();
 }
-
-// Provide a simple boolean check for callers that only need the admin decision.
-export async function isAdminEmail(email: string) {
-  const role = await getUserRoleByEmail(email);
-  return role?.role === "admin";
-}

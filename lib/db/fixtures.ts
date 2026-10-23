@@ -52,14 +52,6 @@ export async function listFixtures(
   return FixtureModel.find(filter).sort({ date: 1 }).lean();
 }
 
-// Availability is open only while the fixture status and deadline both allow responses.
-export async function listOpenFixtures(now = new Date()) {
-  await connectToDatabase();
-  return FixtureModel.find({ status: "open", availabilityDeadline: { $gt: now } })
-    .sort({ date: 1 })
-    .lean();
-}
-
 // Invalid ObjectIds are treated as not-found rather than thrown as cast errors.
 export async function getFixtureById(id: string) {
   await connectToDatabase();
