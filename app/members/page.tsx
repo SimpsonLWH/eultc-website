@@ -60,7 +60,7 @@ async function MembersContent() {
         </p>
       </header>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid items-start gap-5 lg:grid-cols-2">
         <Card>
           <h2 className="text-lg font-semibold text-club-950">
             Registration link

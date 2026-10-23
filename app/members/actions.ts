@@ -136,7 +136,8 @@ export async function generateResetLinkAction(
       resetEmail: link.email,
       resetUrl: link.url,
     };
-  } catch {
+  } catch (error) {
+    console.error("Password reset link generation failed", error);
     return { error: "A reset link could not be generated for that account." };
   }
 }

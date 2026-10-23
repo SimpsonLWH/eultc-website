@@ -4,7 +4,7 @@ const passwordResetLinkSchema = new Schema(
   {
     userId: { type: String, required: true, unique: true },
     email: { type: String, required: true, lowercase: true, trim: true },
-    url: { type: String, required: true },
+    url: { type: String, default: "" },
     createdBy: { type: String, required: true },
     expiresAt: { type: Date, required: true, expires: 0 },
     usedAt: { type: Date, default: null },

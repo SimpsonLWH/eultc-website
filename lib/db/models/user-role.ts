@@ -8,7 +8,7 @@ const userRoleSchema = new Schema(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     role: { type: String, required: true, enum: [...USER_ROLES], default: "player" },
-    // Store an Auth.js subject when one is available; sparse allows unlinked rows.
+    // Store an auth-provider subject when one is available; sparse allows unlinked rows.
     authUserId: { type: String, unique: true, sparse: true },
   },
   { timestamps: true, collection: "user_roles" }

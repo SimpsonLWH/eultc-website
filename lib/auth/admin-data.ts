@@ -12,9 +12,9 @@ import {
   authDatabase,
   authSecret,
   INTERNAL_RESET_HEADER,
-  RESET_ADMIN_HEADER,
 } from "./config";
 import { normalizeClubRole } from "./user-projection";
+import { createPendingResetLink } from "@/lib/membership/reset-link-policy";
 
 type AuthUserDocument = {
   _id: ObjectId;
@@ -143,9 +143,15 @@ export async function generatePasswordResetLink(
     }),
   ]);
 
+  const pending = createPendingResetLink({
+    userId: user.id,
+    email: user.email,
+    createdBy: adminId,
+  });
+  await PasswordResetLinkModel.create(pending);
+
   const resetHeaders = new Headers(requestHeaders);
   resetHeaders.set(INTERNAL_RESET_HEADER, authSecret);
-  resetHeaders.set(RESET_ADMIN_HEADER, adminId);
   await auth.api.requestPasswordReset({
     body: {
       email: user.email,
@@ -157,6 +163,7 @@ export async function generatePasswordResetLink(
   const link = await PasswordResetLinkModel.findOneAndDelete({
     userId,
     createdBy: adminId,
+    url: { $ne: "" },
   }).lean();
   return link ? { email: user.email, url: link.url } : null;
 }
