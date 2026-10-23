@@ -8,7 +8,7 @@ export async function PlayerGate({ children }: { children: ReactNode }) {
   await connection();
   const user = await getCurrentUser();
 
-  if (user && !user.playerId) {
+  if (user && user.role !== "admin" && !user.playerId) {
     // Never create a roster entry from sign-in; a captain must add the player.
     return (
       <section

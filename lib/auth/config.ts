@@ -32,7 +32,7 @@ export const authSecret = requiredEnvironment(
   "BETTER_AUTH_SECRET",
   "build-only-secret-not-for-runtime-use"
 );
-const baseURL = requiredEnvironment(
+export const authBaseURL = requiredEnvironment(
   "BETTER_AUTH_URL",
   "http://localhost:3000"
 );
@@ -50,9 +50,9 @@ const RESET_LINK_TTL_MS = 60 * 60 * 1000;
 
 export const auth = betterAuth({
   appName: "EULTC Clubhouse",
-  baseURL,
+  baseURL: authBaseURL,
   secret: authSecret,
-  trustedOrigins: [baseURL],
+  trustedOrigins: [authBaseURL],
   database: mongodbAdapter(authDatabase),
   emailAndPassword: {
     enabled: true,

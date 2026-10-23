@@ -30,12 +30,17 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   return access.allowed ? user : null;
 });
 
-export async function requireUser(): Promise<CurrentUser> {
+async function requireAccessUser(): Promise<CurrentUser> {
   await connection();
   const user = await getCurrentUser();
   if (!user) {
     redirect("/sign-in");
   }
+  return user;
+}
+
+export async function requireUser(): Promise<CurrentUser> {
+  const user = await requireAccessUser();
   if (!user.playerId) {
     redirect("/auth/not-listed");
   }
@@ -43,7 +48,7 @@ export async function requireUser(): Promise<CurrentUser> {
 }
 
 export async function requireAdmin(): Promise<CurrentUser> {
-  const user = await requireUser();
+  const user = await requireAccessUser();
   if (user.role !== "admin") {
     redirect("/auth/forbidden");
   }

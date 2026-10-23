@@ -228,6 +228,29 @@ export default async function Dashboard({ user }: DashboardProps) {
           </Card>
         </section>
       </div>
+
+      {isAdmin ? (
+        <section aria-label="Captain tools">
+          <Card>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-club-950">
+                  Captain tools
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-muted">
+                  Manage paid members, registration, accounts and selection.
+                </p>
+              </div>
+              <Link
+                className="inline-flex min-h-10 items-center justify-center rounded-control squircle bg-club-700 px-4 text-sm font-semibold text-white hover:bg-club-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
+                href="/members"
+              >
+                Manage members
+              </Link>
+            </div>
+          </Card>
+        </section>
+      ) : null}
     </div>
   );
 }

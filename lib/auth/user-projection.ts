@@ -20,7 +20,9 @@ type PlayerLink = {
   name?: string | null;
 };
 
-function normalizeRole(role: SessionUser["role"]): CurrentUser["role"] {
+export function normalizeClubRole(
+  role: SessionUser["role"]
+): CurrentUser["role"] {
   const values = Array.isArray(role) ? role : role?.split(",") ?? [];
   if (values.includes("admin")) {
     return "admin";
@@ -39,7 +41,7 @@ export function projectCurrentUser(
     id: user.id,
     email: normalizeEmail(user.email),
     name: user.name?.trim() || normalizeEmail(user.email),
-    role: normalizeRole(user.role),
+    role: normalizeClubRole(user.role),
     playerId: player ? player._id.toString() : null,
   };
 }
