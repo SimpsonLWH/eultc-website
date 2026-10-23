@@ -1,5 +1,8 @@
 import { existsSync } from "node:fs";
 
+import { hashPassword } from "better-auth/crypto";
+import { ObjectId } from "mongodb";
+
 import { connectToDatabase } from "../lib/db/connection";
 import type { FixtureInput } from "../lib/db/fixtures";
 import { AvailabilityResponseModel } from "../lib/db/models/availability-response";
@@ -8,6 +11,14 @@ import type { TeamGender } from "../lib/db/models/fixture";
 import { PlayerModel } from "../lib/db/models/player";
 import { TeamSelectionModel } from "../lib/db/models/team-selection";
 import { UserRoleModel } from "../lib/db/models/user-role";
+import { MembershipEntryModel } from "../lib/db/models/membership-entry";
+import { RegistrationInviteModel } from "../lib/db/models/registration-invite";
+import { getDevLoginPassword } from "../lib/auth/dev-login";
+import {
+  addPaidMembers,
+  getActiveInvite,
+  rotateRegistrationInvite,
+} from "../lib/membership/store";
 
 // Load local environment files when this script runs outside Next.js.
 function loadEnvFiles() {
@@ -181,6 +192,10 @@ async function migrateLegacyFixtures() {
 async function main() {
   loadEnvFiles();
   const connection = await connectToDatabase();
+  const authDatabase = connection.connection.db;
+  if (!authDatabase) {
+    throw new Error("MongoDB did not expose a database connection.");
+  }
 
   try {
     await Promise.all([
@@ -189,6 +204,8 @@ async function main() {
       FixtureModel.syncIndexes(),
       AvailabilityResponseModel.syncIndexes(),
       TeamSelectionModel.syncIndexes(),
+      MembershipEntryModel.syncIndexes(),
+      RegistrationInviteModel.syncIndexes(),
     ]);
 
     await migrateLegacyFixtures();
@@ -258,6 +275,64 @@ async function main() {
       })),
     ]);
 
+    await addPaidMembers(
+      players.map((player) => player.email),
+      "seed"
+    );
+    const invite =
+      (await getActiveInvite()) ??
+      (await rotateRegistrationInvite("seed"));
+    if (!invite) {
+      throw new Error("The development registration invite could not be created.");
+    }
+
+    const sampleUsers = [
+      ...players.map((player) => ({ ...player, role: "player" as const })),
+      ...ADMINS.map((admin) => ({ ...admin, role: "admin" as const })),
+    ];
+
+    for (const account of sampleUsers) {
+      const now = new Date();
+      let user = await authDatabase.collection("user").findOne({
+        email: account.email,
+      });
+      if (!user) {
+        const userId = new ObjectId();
+        await authDatabase.collection("user").insertOne({
+          _id: userId,
+          name: account.name,
+          email: account.email,
+          emailVerified: false,
+          image: null,
+          role: account.role,
+          createdAt: now,
+          updatedAt: now,
+        });
+        user = { _id: userId };
+      }
+
+      const credential = await authDatabase.collection("account").findOne({
+        userId: user._id,
+        providerId: "credential",
+      });
+      if (!credential) {
+        await authDatabase.collection("account").insertOne({
+          accountId: user._id.toString(),
+          providerId: "credential",
+          userId: user._id,
+          password: await hashPassword(getDevLoginPassword()),
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      if (user.role !== account.role) {
+        await authDatabase
+          .collection("user")
+          .updateOne({ _id: user._id }, { $set: { role: account.role } });
+      }
+    }
+
     for (const fixture of FIXTURES) {
       // Stable sample identity keeps date-relative fixture rows idempotent across days.
       await FixtureModel.updateOne(
@@ -273,16 +348,19 @@ async function main() {
       );
     }
 
-    const [playerCount, roleCount, adminCount, fixtureCount] = await Promise.all([
-      PlayerModel.countDocuments(),
-      UserRoleModel.countDocuments(),
-      UserRoleModel.countDocuments({ role: "admin" }),
-      FixtureModel.countDocuments(),
-    ]);
+    const [playerCount, roleCount, adminCount, fixtureCount, authUserCount] =
+      await Promise.all([
+        PlayerModel.countDocuments(),
+        UserRoleModel.countDocuments(),
+        UserRoleModel.countDocuments({ role: "admin" }),
+        FixtureModel.countDocuments(),
+        authDatabase.collection("user").countDocuments(),
+      ]);
 
     console.log(`Seed complete on "${connection.connection.name}"`);
     console.log(`  players: ${playerCount}`);
     console.log(`  user roles: ${roleCount} (${adminCount} admins)`);
+    console.log(`  auth users: ${authUserCount}`);
     console.log(`  fixtures: ${fixtureCount}`);
   } finally {
     await connection.disconnect();

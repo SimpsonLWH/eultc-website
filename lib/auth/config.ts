@@ -1,5 +1,7 @@
 import "server-only";
 
+import { randomBytes } from "node:crypto";
+
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { betterAuth } from "better-auth";
 import { APIError, createAuthMiddleware } from "better-auth/api";
@@ -30,7 +32,7 @@ function requiredEnvironment(name: string, buildFallback: string): string {
 
 export const authSecret = requiredEnvironment(
   "BETTER_AUTH_SECRET",
-  "build-only-secret-not-for-runtime-use"
+  isBuild ? randomBytes(32).toString("hex") : ""
 );
 export const authBaseURL = requiredEnvironment(
   "BETTER_AUTH_URL",
@@ -42,6 +44,7 @@ const mongoUri = requiredEnvironment(
 );
 
 const mongoClient = new MongoClient(mongoUri);
+export const authMongoClient = mongoClient;
 export const authDatabase = mongoClient.db();
 
 export const INTERNAL_RESET_HEADER = "x-eultc-internal-reset";
@@ -81,7 +84,7 @@ export const auth = betterAuth({
             usedAt: null,
           },
         },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
       );
     },
     onPasswordReset: async ({ user }) => {

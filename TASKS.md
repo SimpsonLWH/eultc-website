@@ -160,6 +160,12 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 
 **How to test:** sign in with a seeded player email, refresh, confirm session persists; sign in with the admin email and call an admin-only helper; finish with an unseeded email and check the empty state.
 
+**Implementation note (2026-10-23):** Replaced Auth.js with Better Auth
+email/password sessions. Registration is invite-only and checks the temporary
+paid-email list; captain accounts bypass that check. Password recovery links
+are generated manually at `/members` rather than sent by email. EUSU membership
+verification remains a replaceable follow-up.
+
 ### T04 - Fixtures list, fixture detail and admin fixture forms
 - Status: Done
 - Owner: Lewis
