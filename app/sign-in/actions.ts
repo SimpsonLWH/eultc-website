@@ -1,7 +1,8 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { isDevLoginEnabled, signIn } from "@/lib/auth/config";
+import { signIn } from "@/lib/auth/config";
+import { isDevLoginEnabled } from "@/lib/auth/dev-login";
 
 export type SignInState = {
   error?: string;

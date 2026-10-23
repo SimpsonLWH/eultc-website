@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
-import { isDevLoginEnabled } from "@/lib/auth/config";
+import { isDevLoginEnabled } from "@/lib/auth/dev-login";
 import { listRankings } from "@/lib/db/players";
 import { listAdmins } from "@/lib/db/roles";
 import { quickSignIn } from "./actions";

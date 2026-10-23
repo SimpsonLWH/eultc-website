@@ -3,11 +3,7 @@ import "server-only";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getPlayerByEmail, getUserRoleByEmail } from "@/lib/db";
-
-// Credentials are intentionally a local shortcut; production requires an explicit opt-in.
-export function isDevLoginEnabled() {
-  return process.env.NODE_ENV !== "production" || process.env.AUTH_DEV_LOGIN === "true";
-}
+import { isDevLoginEnabled } from "./dev-login";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

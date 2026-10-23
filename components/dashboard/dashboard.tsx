@@ -5,7 +5,6 @@ import Card from "@/components/ui/card";
 import ImageFrame from "@/components/ui/image-frame";
 import type { CurrentUser } from "@/lib/auth";
 import {
-  getPlayerById,
   listFixtures,
   listPlayerResponses,
   listRankings,
@@ -29,13 +28,15 @@ type DashboardProps = {
 // The signed-in home: what is next, have I answered, and where am I ranked.
 // Everything is read in this server component; no client-side fetch waterfall.
 export default async function Dashboard({ user }: DashboardProps) {
-  const [fixtures, rankings, player] = await Promise.all([
+  const isAdmin = user.role === "admin";
+  const [fixtures, rankings] = await Promise.all([
     listFixtures("upcoming"),
     listRankings(),
-    user.playerId ? getPlayerById(user.playerId) : Promise.resolve(null),
   ]);
 
-  const rank = player?.rankingPosition ?? null;
+  const rank =
+    rankings.find((player) => player.id === user.playerId)?.rankingPosition ??
+    null;
   const nextFixture = rank
     ? selectNextEligibleFixture(fixtures, rank)
     : null;
@@ -113,7 +114,13 @@ export default async function Dashboard({ user }: DashboardProps) {
           ) : (
             <EmptyBlock
               title="No upcoming fixtures"
-              description="Your next fixture appears here once the captains publish the schedule."
+              description={
+                rank
+                  ? "Your next fixture appears here once the captains publish the schedule."
+                  : isAdmin
+                    ? "Captains manage fixtures from the Fixtures tab."
+                    : "Fixtures appear here once a captain adds this account to the active player rankings."
+              }
             />
           )}
           {nextFixture ? (
@@ -150,15 +157,21 @@ export default async function Dashboard({ user }: DashboardProps) {
               )
             ) : (
               <p className="mt-2 text-sm leading-6 text-muted">
-                Answer when a fixture is announced.
+                {rank
+                  ? "Answer when a fixture is announced."
+                  : isAdmin
+                    ? "Captain accounts are outside the player availability list."
+                    : "Availability opens once a captain adds this account to the active player rankings."}
               </p>
             )}
-            <Link
-              className="mt-4 inline-block text-sm font-semibold text-club-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
-              href="/availability"
-            >
-              {myAnswer ? "Change your answer" : "Answer availability"}
-            </Link>
+            {rank ? (
+              <Link
+                className="mt-4 inline-block text-sm font-semibold text-club-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club-600"
+                href="/availability"
+              >
+                {myAnswer ? "Change your answer" : "Answer availability"}
+              </Link>
+            ) : null}
           </Card>
         </section>
 
@@ -180,7 +193,9 @@ export default async function Dashboard({ user }: DashboardProps) {
               </p>
             ) : (
               <p className="mt-2 text-sm leading-6 text-muted">
-                Your ranking appears here once a captain adds you to the list.
+                {isAdmin
+                  ? "Captain accounts are kept outside the player rankings."
+                  : "Your ranking appears here once a captain adds you to the list."}
               </p>
             )}
             {topFive.length > 0 ? (
