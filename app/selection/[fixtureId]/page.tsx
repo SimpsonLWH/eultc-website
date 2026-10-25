@@ -6,6 +6,7 @@ import { connection } from "next/server";
 
 import ResponseTracker from "@/components/selection/response-tracker";
 import { getCurrentUser, requireAdmin } from "@/lib/auth";
+import { playersEligibleForTeam } from "@/lib/availability/eligibility";
 import {
   getFixtureById,
   listRankings,
@@ -52,13 +53,16 @@ async function FixtureSelectionContent({
     listRankings(),
     listResponsesForFixture(fixtureId),
   ]);
-  const activePlayerIds = new Set(players.map((player) => player.id));
+  const eligiblePlayers = playersEligibleForTeam(players, fixture.teamNumber);
+  const eligiblePlayerIds = new Set(
+    eligiblePlayers.map((player) => player.id)
+  );
   const responseByPlayer = new Map(
     responses
-      .filter((response) => activePlayerIds.has(String(response.playerId)))
+      .filter((response) => eligiblePlayerIds.has(String(response.playerId)))
       .map((response) => [String(response.playerId), response])
   );
-  const rankedPlayers = players.map((player) => ({
+  const rankedPlayers = eligiblePlayers.map((player) => ({
     id: player.id,
     rank: player.rankingPosition,
     name: player.name,
@@ -119,7 +123,7 @@ async function FixtureSelectionContent({
         available={available}
         unavailable={unavailable}
         noResponse={noResponsePlayers.length}
-        total={players.length}
+        total={eligiblePlayers.length}
         respondedPlayers={respondedPlayers}
         noResponsePlayers={noResponsePlayers}
       />

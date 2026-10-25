@@ -71,7 +71,7 @@ async function AvailabilityContent() {
           Weekly availability
         </h1>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Tell the captains whether you can play each matchweek.
+          Tell the captains whether you can play each eligible fixture.
         </p>
         <p className="mt-3 text-sm font-medium text-ink" aria-live="polite">
           {openFixtures.length} open {openFixtures.length === 1 ? "fixture" : "fixtures"}, {" "}

@@ -1,11 +1,13 @@
 import { formatLondonDateInput } from "../fixtures/datetime";
+import { eligibleTeams } from "../availability/eligibility";
 import type { FixtureStatus, TeamGender } from "../db/models/fixture";
 
 import {
-  buildSelection,
   type SelectionPlayer,
   type SelectionResponse,
   type SelectionResult,
+  type SelectionSlot,
+  type SelectionTeam,
 } from "./build-selection";
 import type { Fixture } from "../db/models/fixture";
 
@@ -37,10 +39,21 @@ export type Matchweek<T extends MatchweekFixture = MatchweekFixture> = {
 
 export type MatchweekSelection = {
   result: SelectionResult;
+  /** Four ordered reserve slots after the selected teams. */
+  reserves: SelectionReserve[];
   /** Distinct players with any response across the matchweek's fixtures. */
   respondedPlayerCount: number;
   availablePlayerCount: number;
   unavailablePlayerCount: number;
+};
+
+export type MatchweekResponse = SelectionResponse & {
+  fixtureId: string;
+};
+
+export type SelectionReserve = {
+  position: number;
+  playerId: string | null;
 };
 
 /** A persisted fixture document: schema fields plus its stored id. */
@@ -87,45 +100,128 @@ export function groupFixturesIntoMatchweeks<T extends MatchweekFixture>(
   );
 }
 
+function compareByRank(a: SelectionPlayer, b: SelectionPlayer): number {
+  if (a.rankingPosition !== b.rankingPosition) {
+    return a.rankingPosition - b.rankingPosition;
+  }
+  return a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
+}
+
+function emptyReserveSlots(): SelectionReserve[] {
+  return Array.from({ length: 4 }, (_, index) => ({
+    position: index + 1,
+    playerId: null,
+  }));
+}
+
 /**
  * Build the T07 selection for one matchweek.
  *
- * Responses are merged per player across the group's fixtures: a player who
- * answered several fixtures is counted once, and "available" wins when their
- * answers disagree. Callers must scope `responses` to the group's fixtures.
+ * Availability is scoped to the fixture it answers. A player is considered
+ * only for fixtures their rank allows, can be selected once, and unavailable
+ * responses never remove an available answer for the same fixture.
  */
-export function buildMatchweekSelection<T extends MatchweekFixture>(input: {
+export function buildMatchweekSelection<
+  T extends MatchweekFixture & { _id: unknown },
+>(input: {
   matchweek: Matchweek<T>;
   players: SelectionPlayer[];
-  responses: SelectionResponse[];
+  responses: MatchweekResponse[];
 }): MatchweekSelection {
-  const statusByPlayer = new Map<string, SelectionResponse["status"]>();
+  const fixturesById = new Map(
+    input.matchweek.fixtures.map((fixture) => [String(fixture._id), fixture])
+  );
+  const playersById = new Map(
+    input.players
+      .filter((player) => player.isActive)
+      .map((player) => [player.id, player])
+  );
+  const sortedPlayers = [...playersById.values()].sort(compareByRank);
+  const statusByFixture = new Map<
+    string,
+    Map<string, SelectionResponse["status"]>
+  >();
+  const respondedPlayerIds = new Set<string>();
+  const availablePlayerIds = new Set<string>();
+
   for (const response of input.responses) {
-    const existing = statusByPlayer.get(response.playerId);
+    const fixture = fixturesById.get(response.fixtureId);
+    const player = playersById.get(response.playerId);
+    if (
+      !fixture ||
+      !player ||
+      !eligibleTeams(player.rankingPosition).includes(fixture.teamNumber)
+    ) {
+      continue;
+    }
+
+    const fixtureResponses =
+      statusByFixture.get(response.fixtureId) ??
+      new Map<string, SelectionResponse["status"]>();
+    const existing = fixtureResponses.get(response.playerId);
     if (!existing || response.status === "available") {
-      statusByPlayer.set(response.playerId, response.status);
+      fixtureResponses.set(response.playerId, response.status);
+    }
+    statusByFixture.set(response.fixtureId, fixtureResponses);
+    respondedPlayerIds.add(response.playerId);
+    if (response.status === "available") {
+      availablePlayerIds.add(response.playerId);
     }
   }
 
-  const mergedResponses: SelectionResponse[] = [...statusByPlayer].map(
-    ([playerId, status]) => ({ playerId, status })
+  const selectedPlayerIds = new Set<string>();
+  const teams: SelectionTeam[] = input.matchweek.fixtures.map(
+    (fixture) => {
+      const availableForFixture = statusByFixture.get(String(fixture._id));
+      const eligible = sortedPlayers
+        .filter(
+          (player) =>
+            !selectedPlayerIds.has(player.id) &&
+            availableForFixture?.get(player.id) === "available"
+        )
+        .slice(0, 4);
+      const slots: SelectionSlot[] = Array.from(
+        { length: 4 },
+        (_, seedIndex) => {
+          const player = eligible[seedIndex];
+          if (player) {
+            selectedPlayerIds.add(player.id);
+          }
+          return {
+            seed: seedIndex + 1,
+            playerId: player?.id ?? null,
+          };
+        }
+      );
+      return { teamNumber: fixture.teamNumber, slots };
+    }
   );
 
-  const result = buildSelection({
-    players: input.players,
-    responses: mergedResponses,
-    teamsPlaying: input.matchweek.fixtures.length,
-  });
+  const selectedCount = selectedPlayerIds.size;
+  const unfilledSlots = input.matchweek.fixtures.length * 4 - selectedCount;
+  const result: SelectionResult = {
+    teams,
+    incomplete: unfilledSlots > 0,
+    unfilledSlots,
+  };
 
-  const availablePlayerCount = [...statusByPlayer.values()].filter(
-    (status) => status === "available"
-  ).length;
+  const reserves = emptyReserveSlots();
+  const remainingAvailable = sortedPlayers
+    .filter(
+      (player) =>
+        availablePlayerIds.has(player.id) && !selectedPlayerIds.has(player.id)
+    )
+    .slice(0, reserves.length);
+  for (const [index, player] of remainingAvailable.entries()) {
+    reserves[index] = { position: index + 1, playerId: player.id };
+  }
 
   return {
     result,
-    respondedPlayerCount: statusByPlayer.size,
-    availablePlayerCount,
-    unavailablePlayerCount: statusByPlayer.size - availablePlayerCount,
+    reserves,
+    respondedPlayerCount: respondedPlayerIds.size,
+    availablePlayerCount: availablePlayerIds.size,
+    unavailablePlayerCount: respondedPlayerIds.size - availablePlayerIds.size,
   };
 }
 

@@ -73,6 +73,7 @@ async function TeamSheetContent() {
     })),
     responses: responses.map((response) => ({
       playerId: String(response.playerId),
+      fixtureId: String(response.fixtureId),
       status: response.status,
     })),
   });

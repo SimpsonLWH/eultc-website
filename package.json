@@ -12,6 +12,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "db:seed": "tsx scripts/seed.ts",
+    "db:seed:bucs-preview": "tsx scripts/seed-bucs-preview.ts",
     "auth:bootstrap": "tsx scripts/bootstrap-auth.ts"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "@types/react-dom": "^19",
     "eslint": "^10.12.0",
     "eslint-config-next": "16.4.2",
+    "read-excel-file": "^9.3.12",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

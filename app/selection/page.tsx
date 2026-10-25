@@ -6,6 +6,7 @@ import { connection } from "next/server";
 
 import SelectionFixtureCard from "@/components/selection/selection-fixture-card";
 import { getCurrentUser, requireAdmin } from "@/lib/auth";
+import { playersEligibleForTeam } from "@/lib/availability/eligibility";
 import {
   listFixtures,
   listRankings,
@@ -65,7 +66,13 @@ async function SelectionContent() {
     responsesByFixture.set(fixtureId, fixtureResponses);
   }
   const summaries = fixtures.map((fixture) => {
-    const fixtureResponses = responsesByFixture.get(String(fixture._id)) ?? [];
+    const eligiblePlayers = playersEligibleForTeam(players, fixture.teamNumber);
+    const eligiblePlayerIds = new Set(
+      eligiblePlayers.map((player) => player.id)
+    );
+    const fixtureResponses = (
+      responsesByFixture.get(String(fixture._id)) ?? []
+    ).filter((response) => eligiblePlayerIds.has(String(response.playerId)));
     const available = fixtureResponses.filter(
       (response) => response.status === "available"
     ).length;
@@ -85,7 +92,7 @@ async function SelectionContent() {
       },
       available,
       unavailable,
-      noResponse: players.length - fixtureResponses.length,
+      noResponse: eligiblePlayers.length - fixtureResponses.length,
     };
   });
 

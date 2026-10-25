@@ -6,6 +6,24 @@ type MongooseCache = {
   promise: Promise<typeof mongoose> | null;
 };
 
+type DatabaseEnvironment = {
+  [key: string]: string | undefined;
+  EULTC_DATA_MODE?: string;
+  MONGODB_PREVIEW_URI?: string;
+  MONGODB_URI?: string;
+};
+
+export function resolveDatabaseUri(
+  environment: DatabaseEnvironment = process.env
+): string | null {
+  const previewUri = environment.MONGODB_PREVIEW_URI?.trim();
+  if (environment.EULTC_DATA_MODE === "preview") {
+    // Preview mode must never fall through to the normal database URI.
+    return previewUri || null;
+  }
+  return environment.MONGODB_URI?.trim() || null;
+}
+
 const globalForMongoose = globalThis as typeof globalThis & {
   __eultcMongoose?: MongooseCache;
 };
@@ -22,10 +40,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   // Connect once using the configured URI and clear a failed promise so later calls can retry.
-  const uri = process.env.MONGODB_URI;
+  const uri = resolveDatabaseUri();
   if (!uri) {
     throw new Error(
-      "MONGODB_URI is not set. Copy .env.example to .env.local and add your MongoDB connection string."
+      "No MongoDB URI is set. Add MONGODB_URI, or set EULTC_DATA_MODE=preview and MONGODB_PREVIEW_URI."
     );
   }
 

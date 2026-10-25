@@ -40,19 +40,39 @@ export default function MatchweekSheet({
   focusFixtureId = null,
   lastPlayed = false,
 }: MatchweekSheetProps) {
-  const { result, respondedPlayerCount, availablePlayerCount } = selection;
+  const {
+    result,
+    reserves,
+    respondedPlayerCount,
+    availablePlayerCount,
+  } = selection;
   const capacity = matchweek.fixtures.length * SEEDS_PER_TEAM;
   const teamLabels = matchweek.fixtures
     .map((fixture) => formatTeamLabel(fixture.gender, fixture.teamNumber))
     .join(" · ");
+  const fixtureByTeamNumber = new Map(
+    matchweek.fixtures.map((fixture) => [fixture.teamNumber, fixture])
+  );
   const currentUserSlot = findCurrentUserSlot(
     result.teams,
-    matchweek.fixtures,
+    fixtureByTeamNumber,
     currentPlayerId
   );
   const incompleteTeams = result.teams.filter(
     (team) => team.slots.some((slot) => slot.playerId === null)
   );
+  const incompleteTeamMessages = incompleteTeams.flatMap((team) => {
+    const fixture = fixtureByTeamNumber.get(team.teamNumber);
+    if (!fixture) {
+      return [];
+    }
+    const unfilled = team.slots.filter(
+      (slot) => slot.playerId === null
+    ).length;
+    return [
+      `${formatTeamLabel(fixture.gender, fixture.teamNumber)} has ${unfilled} unfilled ${unfilled === 1 ? "slot" : "slots"}`,
+    ];
+  });
 
   return (
     <div className="space-y-7">
@@ -71,8 +91,8 @@ export default function MatchweekSheet({
             {teamLabels}
           </p>
           <p className="mt-2 text-sm font-medium text-ink" aria-live="polite">
-            {respondedPlayerCount} of {capacity} signed up · {availablePlayerCount}{" "}
-            available
+            {respondedPlayerCount} {respondedPlayerCount === 1 ? "player" : "players"}{" "}
+            responded · {availablePlayerCount} available for at least one fixture
           </p>
         </div>
         {currentUserSlot ? (
@@ -88,16 +108,8 @@ export default function MatchweekSheet({
           className="rounded-surface squircle border border-club-300 bg-club-100 p-4"
         >
           <p className="text-sm font-semibold text-club-950">
-            {incompleteTeams
-              .map((team) => {
-                const fixture = matchweek.fixtures[team.teamNumber - 1];
-                const unfilled = team.slots.filter(
-                  (slot) => slot.playerId === null
-                ).length;
-                return `${formatTeamLabel(fixture.gender, fixture.teamNumber)} has ${unfilled} unfilled ${unfilled === 1 ? "slot" : "slots"}`;
-              })
-              .join(" · ")}{" "}
-            · {respondedPlayerCount} of {capacity} signed up
+            {incompleteTeamMessages.join(" · ")}{" "}
+            · {availablePlayerCount} available for {capacity} team slots
           </p>
           <Link
             href="/selection"
@@ -121,7 +133,10 @@ export default function MatchweekSheet({
       ) : (
         <div className="grid items-start gap-5 lg:grid-cols-2">
           {result.teams.map((team) => {
-            const fixture = matchweek.fixtures[team.teamNumber - 1];
+            const fixture = fixtureByTeamNumber.get(team.teamNumber);
+            if (!fixture) {
+              return null;
+            }
             const isFocus =
               focusFixtureId !== null &&
               String(fixture._id) === focusFixtureId;
@@ -137,6 +152,64 @@ export default function MatchweekSheet({
               />
             );
           })}
+          <section aria-label="Reserves" className="lg:col-span-2">
+            <Card>
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-club-700">
+                    After the teams
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold text-club-950">
+                    Reserves
+                  </h2>
+                </div>
+                <p className="text-sm text-muted">
+                  Next available players by rank
+                </p>
+              </div>
+              <ol className="mt-5 divide-y divide-line border-t border-line">
+                {reserves.map((reserve) => {
+                  const player =
+                    reserve.playerId === null
+                      ? null
+                      : playersById.get(reserve.playerId);
+                  const isOwnReserve =
+                    reserve.playerId !== null &&
+                    reserve.playerId === currentPlayerId;
+
+                  return (
+                    <li
+                      key={reserve.position}
+                      className={`flex items-center justify-between gap-3 py-3 ${
+                        isOwnReserve
+                          ? "rounded-control squircle bg-club-100 px-3 ring-1 ring-inset ring-club-300"
+                          : ""
+                      }`}
+                    >
+                      <span className="w-20 shrink-0 text-xs font-semibold uppercase text-muted">
+                        Reserve {reserve.position}
+                      </span>
+                      {player ? (
+                        <span className="flex min-w-0 flex-1 items-center gap-2">
+                          <span className="min-w-0 truncate text-sm font-medium text-ink">
+                            {player.name}
+                          </span>
+                          <span className="text-xs font-semibold text-muted">
+                            #{player.rankingPosition}
+                          </span>
+                          {isOwnReserve ? <Badge variant="club">You</Badge> : null}
+                        </span>
+                      ) : (
+                        <span className="flex-1 text-sm italic text-muted">
+                          Unfilled reserve
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </Card>
+          </section>
         </div>
       )}
     </div>
@@ -145,7 +218,7 @@ export default function MatchweekSheet({
 
 function findCurrentUserSlot(
   teams: SelectionTeam[],
-  fixtures: FixtureWithId[],
+  fixtures: ReadonlyMap<number, FixtureWithId>,
   currentPlayerId: string | null
 ): { teamLabel: string; seed: number } | null {
   if (currentPlayerId === null) {
@@ -157,7 +230,10 @@ function findCurrentUserSlot(
       (candidate) => candidate.playerId === currentPlayerId
     );
     if (slot && slot.playerId !== null) {
-      const fixture = fixtures[team.teamNumber - 1];
+      const fixture = fixtures.get(team.teamNumber);
+      if (!fixture) {
+        return null;
+      }
       return {
         teamLabel: formatTeamLabel(fixture.gender, fixture.teamNumber),
         seed: slot.seed,

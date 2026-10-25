@@ -10,6 +10,7 @@ import { admin } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 
 import { getUserRoleByEmail } from "@/lib/db";
+import { resolveDatabaseUri } from "@/lib/db/connection";
 import { PasswordResetLinkModel } from "@/lib/db/models/password-reset-link";
 import { evaluateRegistrationAccess } from "@/lib/membership/policy";
 import { getActiveInvite, isPaidMember } from "@/lib/membership";
@@ -36,10 +37,13 @@ export const authBaseURL = requiredEnvironment(
   "BETTER_AUTH_URL",
   "http://localhost:3000"
 );
-const mongoUri = requiredEnvironment(
-  "MONGODB_URI",
-  "mongodb://127.0.0.1:27017/eultc-build"
-);
+const configuredMongoUri = resolveDatabaseUri();
+if (!configuredMongoUri && !isBuild) {
+  throw new Error(
+    "No MongoDB URI is set. Add MONGODB_URI, or set EULTC_DATA_MODE=preview and MONGODB_PREVIEW_URI."
+  );
+}
+const mongoUri = configuredMongoUri ?? "mongodb://127.0.0.1:27017/eultc-build";
 
 const mongoClient = new MongoClient(mongoUri);
 export const authMongoClient = mongoClient;

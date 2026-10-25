@@ -13,3 +13,13 @@ export function eligibleTeams(rank: number): number[] {
   // Players may represent their own team or any higher-ranked team, never a lower-ranked one.
   return Array.from({ length: ownTeam }, (_, index) => index + 1);
 }
+
+/** Keep only ranked players who may answer the selected fixture. */
+export function playersEligibleForTeam<T extends { rankingPosition: number }>(
+  players: readonly T[],
+  teamNumber: number
+): T[] {
+  return players.filter((player) =>
+    eligibleTeams(player.rankingPosition).includes(teamNumber)
+  );
+}

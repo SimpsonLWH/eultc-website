@@ -15,9 +15,33 @@ npm run dev
 - For a new production admin, provision the email and print the current invite with `npm run auth:bootstrap -- --email captain@example.com --name "Club Captain"`, then self-register through that link.
 - JSON API: `/api/health`, `/api/fixtures?scope=upcoming|past|all`, `/api/fixtures/[fixtureId]`, `/api/rankings`.
 
+### BUCS organiser preview
+
+The organiser workbook can populate a disposable database for UI testing
+without changing production or committing player identities.
+
+```bash
+EULTC_DATA_MODE=preview \
+MONGODB_PREVIEW_URI="mongodb://localhost:27017/eultc_preview" \
+npm run db:seed:bucs-preview -- \
+  --file "/path/to/BUCS Team Organiser 26-27.xlsx" \
+  --apply
+
+EULTC_DATA_MODE=preview \
+MONGODB_PREVIEW_URI="mongodb://localhost:27017/eultc_preview" \
+npm run dev
+```
+
+The command is a dry run unless `--apply` is present. It refuses production
+and non-preview database names, skips unresolved cup ties, and uses synthetic
+times, venues, emails and availability answers. The source workbook remains
+outside the repository; see
+[docs/beta-launch-checklist.md](docs/beta-launch-checklist.md) for the
+non-preview launch gates.
+
 ## Planning
 
-- V1 execution board: [TASKS.md](TASKS.md) - tickets T01-T13 with dependencies and acceptance criteria.
+- V1 execution board: [TASKS.md](TASKS.md) - tickets T01-T13B with dependencies and acceptance criteria.
 - Wider club proposal (proposed planning context, not V1 scope): [docs/project-proposal.md](docs/project-proposal.md).
 
 ## Getting Started
