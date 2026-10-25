@@ -4,10 +4,10 @@
 
 EULTC is Edinburgh University Lawn Tennis Club. The V1 beta is BUCS-only: it replaces the men's BUCS weekly signup Google Sheet/Form with one workflow.
 
-- Players submit weekly availability per fixture (home or away) before the captain's deadline.
+- Players submit availability separately for each eligible fixture (home or away) before the captain's deadline.
 - The app tracks who has responded and shows a live team sheet.
-- There is one ranking list (for example 1 to 36). Teams have 4 players. If N teams play that week, the top 4xN signed-up players by rank get games.
-- Slots are filled sequentially, strongest first: the best available player is seed 1 of team 1, then seed 2, and so on. If only rank 36 signs up, they are seed 1 of team 1.
+- There is one ranking list. A player may answer their own ranked team or any stronger team, never a weaker team.
+- Teams have four players and fill strongest-first without reusing a player. After the teams, four reserves are selected from the remaining available players by rank.
 - Rankings are edited only by admins (team captains) for now.
 
 Out of scope for V1: news/social posts, newsletters, forum/Q&A, travel reimbursements, membership validation, game finder, box leagues, other sports, multi-university support.
@@ -34,7 +34,8 @@ How to work this board: see CONTRIBUTING.md. Status values: Todo, In progress, D
 | T10 | Home dashboard and logged-out view | S | T04, T09 | Lewis | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) |
 | T11 | Deployment and CI | S | T01 | either | [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) (done, closed) |
 | T12 | Tooling cleanups and Node version | S | none | either | [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) (done, closed) |
-| T13 | Seed real data, QA pass and beta launch checklist | S | T04-T12 | both (joint) | [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) |
+| T13A | Preview organiser data, matchweek QA and beta launch docs | M | T04-T12 | Lewis | [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) |
+| T13B | Run the real-data beta rehearsal and approve launch | S | T13A | both (joint) | [#56](https://github.com/SimpsonLWH/eultc-website/issues/56) |
 
 Every ticket is independently mergeable and must leave the app deployable. Each issue links to its dependencies by issue URL; implementers should also read the ticket's Collision warning where one is present.
 
@@ -47,7 +48,7 @@ Work issues in milestone order; an issue is ready when everything it depends on 
 | M1 - Foundations | App shell and design tokens, data layer, auth and roles, deploy/CI, tooling cleanups | [#4](https://github.com/SimpsonLWH/eultc-website/issues/4) T01, [#5](https://github.com/SimpsonLWH/eultc-website/issues/5) T02 (done), [#6](https://github.com/SimpsonLWH/eultc-website/issues/6) T03 (done), [#14](https://github.com/SimpsonLWH/eultc-website/issues/14) T11, [#15](https://github.com/SimpsonLWH/eultc-website/issues/15) T12 |
 | M2 - V1 BUCS: core | Fixtures and admin forms, the availability form, the response tracker | [#7](https://github.com/SimpsonLWH/eultc-website/issues/7) T04 (done), [#8](https://github.com/SimpsonLWH/eultc-website/issues/8) T05, [#9](https://github.com/SimpsonLWH/eultc-website/issues/9) T06 |
 | M3 - V1 BUCS: selection | Selection engine, live team sheet, rankings and admin editor | [#10](https://github.com/SimpsonLWH/eultc-website/issues/10) T07, [#11](https://github.com/SimpsonLWH/eultc-website/issues/11) T08, [#12](https://github.com/SimpsonLWH/eultc-website/issues/12) T09 |
-| M4 - V1 BUCS: beta | Dashboard, real seed data, captain QA pass, launch checklist | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) T10, [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) T13 |
+| M4 - V1 BUCS: beta | Dashboard, organiser preview QA, real-data rehearsal, launch checklist | [#13](https://github.com/SimpsonLWH/eultc-website/issues/13) T10, [#16](https://github.com/SimpsonLWH/eultc-website/issues/16) T13A, [#56](https://github.com/SimpsonLWH/eultc-website/issues/56) T13B |
 | M5 - Club members: phase 1 (proposed) | Match results, stats and leaderboards, reminders, training sign-ups | [#17](https://github.com/SimpsonLWH/eultc-website/issues/17), [#18](https://github.com/SimpsonLWH/eultc-website/issues/18), [#19](https://github.com/SimpsonLWH/eultc-website/issues/19), [#22](https://github.com/SimpsonLWH/eultc-website/issues/22) |
 | M6 - Club members: phase 2 (proposed) | Membership/payment checks, travel reimbursements | [#20](https://github.com/SimpsonLWH/eultc-website/issues/20), [#21](https://github.com/SimpsonLWH/eultc-website/issues/21) |
 | M7 - Club hub (proposed) | News and notifications, calendars, polls | [#23](https://github.com/SimpsonLWH/eultc-website/issues/23), [#24](https://github.com/SimpsonLWH/eultc-website/issues/24), [#25](https://github.com/SimpsonLWH/eultc-website/issues/25) |
@@ -287,6 +288,11 @@ verification remains a replaceable follow-up.
 
 **How to test:** npm test; inspect the expected mapping in the 12-player test against the product rules by hand; run npm run lint and npm run build.
 
+**Implementation correction (2026-10-25):** availability is scoped to a
+specific fixture. A player can only be selected for a fixture they answered
+available for, and only within their rank eligibility. The matchweek result
+must also expose four ordered reserves. See T13A.
+
 ### T08 - Live team sheet
 - Status: Done
 - Owner: Lewis
@@ -302,6 +308,7 @@ verification remains a replaceable follow-up.
 - /team-sheet: resolves to the next upcoming fixture and renders its live sheet. If none is upcoming, show the most recent past fixture labelled "last played"; if neither exists, show an empty state.
 - Per-fixture route /fixtures/[fixtureId]/team-sheet for any fixture; the fixture detail page (T04) links here.
 - Render the T07 output: Team 1, Team 2 and so on, each with seed rows 1-4 showing player name and rank. Partial teams show explicit unfilled slots. Header shows opponent, date, venue, home/away and the signup count.
+- Show four reserve positions after the teams, using the next-ranked remaining players who are available for at least one fixture that week.
 - Freshness: no websockets. Use revalidation from the T05 action or an equivalent per-request fresh render so a refresh shows a changed answer.
 - Signed-in members only (names stay inside the club): anonymous users redirect to /sign-in.
 - Signed-in players see a "You: Team 2, seed 3" highlight on their own row.
@@ -317,6 +324,10 @@ verification remains a replaceable follow-up.
 - [ ] Readable at 375px, own row highlighted. npm run lint and npm run build pass.
 
 **How to test:** seed 8 available players with N=2 and compare /team-sheet against T07's expected output; change an answer in a player session and refresh; view as admin vs player to check the banner.
+
+**Implementation correction (2026-10-25):** matchweek selection must preserve
+fixture-specific availability rather than merging any “available” reply across
+the week. The sheet also requires four reserves. See T13A.
 
 ### T09 - Rankings page and admin ranking editor
 - Status: Done
@@ -429,33 +440,61 @@ verification remains a replaceable follow-up.
 
 **How to test:** rm -rf node_modules && npm ci on the chosen Node version, then npm run lint and npm run build.
 
-### T13 - Seed real data, QA pass and beta launch checklist
+### T13A - Preview organiser data, matchweek QA and beta launch docs
+- Status: In progress
+- Owner: Lewis
+- Type: chore
+- Size: M
+- Depends on: T04, T05, T06, T07, T08, T09, T10, T11, T12
+- Touches: scripts/seed-bucs-preview.ts (new), lib/bucs-organiser/, lib/selection/, components/team-sheet/, docs/beta-launch-checklist.md, README.md and TASKS.md
+
+**Why:** The organiser workbook is useful for checking UI density and exposing
+real workflow assumptions, but it is not yet a verified production dataset.
+This ticket builds an isolated preview dataset and corrects selection logic
+without claiming factual or launch readiness.
+
+**Scope:**
+- Import the workbook’s Ranking List and Fixture List into a database whose name contains `preview`.
+- Use the workbook names and ranks for UI density, with synthetic `@preview.invalid` identities and synthetic fixture logistics.
+- Skip “No Fixture” and unresolved cup ties; report every skipped row.
+- Honour fixture-specific availability and rank eligibility, then select strongest-first teams and four reserves.
+- Draft docs/beta-launch-checklist.md with unresolved launch gates and the rollback to the existing Google Sheet.
+- Document the preview-only command and keep all source data outside the public repository.
+
+**Out of scope:** Production seeding, real member emails or UUNs, factual fixture claims, inviting players, mass communication, or closing the real beta launch.
+
+**Acceptance criteria:**
+- [ ] The preview seed defaults to dry-run and refuses production databases.
+- [ ] The workbook provides 39 ranked names and 33 importable fixtures; two cup ties are reported as skipped.
+- [ ] Matchweek 6 renders five teams and four reserves from deliberately synthetic availability data.
+- [ ] Availability for one fixture cannot place a player into another fixture, and rank eligibility is enforced.
+- [ ] The beta launch checklist is merged as a draft with unresolved launch blockers, fallback and sign-off.
+- [ ] Preview data is not written to production and no source identities are committed.
+
+**How to test:** run the dry-run import, apply it to a database whose name contains `preview`, sign in with the preview accounts, and verify rankings, fixtures, response tracker, Matchweek 6 teams and reserves at desktop and mobile widths.
+
+### T13B - Run the real-data beta rehearsal and approve launch
 - Status: Todo
 - Owner: unassigned
 - Type: chore
 - Size: S
-- Depends on: T04, T05, T06, T07, T08, T09, T10, T11, T12
-- Touches: scripts/seed-real.ts (new), docs/beta-launch-checklist.md, README.md (if setup notes change)
-- Suggested owner: both (joint)
+- Depends on: T13A
+- Touches: docs/beta-launch-checklist.md and the eventual verified production data run
+- Issue: [#56](https://github.com/SimpsonLWH/eultc-website/issues/56)
 
-**Why:** The beta only counts if it reproduces the real weekly sheet. This is the bridge from the old Google Sheet to the app, with a captain checking the output.
+**Why:** A preview proves the interface and rules; it does not prove the club's
+real accounts and fixture logistics. The beta starts only after a captain
+rehearses a verified fixture week and accepts the output.
 
-**Scope:**
-- Load the real ranking list and the real fixture list from the existing BUCS sheet into the production database, via a one-off script or the admin UI, whichever is safer for the data.
-- Walk one real fixture week with a captain: open signup, submit availability as a player, review the tracker, generate the selection, publish the team sheet. Compare the generated teams against the organiser's manual selection side by side.
-- Log every discrepancy and either fix it in this ticket (one-file changes) or open a new board ticket for anything larger.
-- docs/beta-launch-checklist.md: who is invited and how, sign-in instructions for members, who holds admin, how feedback is collected, the fallback to the old sheet, and go/no-go criteria for the first live week.
-- Update deployment envs or README setup notes if the real data run needs it.
+**Scope:** Verified member identities, confirmed fixture details, named invite cohort, feedback channel, captain rehearsal, discrepancy sign-off and go/no-go approval.
 
-**Out of scope:** Inviting players for real, sending any mass communication, expanding beyond BUCS or beyond the men's squad.
+**Out of scope:** Mass communication, payment verification, other squads or non-BUCS workflows.
 
 **Acceptance criteria:**
-- [ ] Real rankings and fixtures are visible in production for admins.
-- [ ] One real week can be run end to end without touching the Google Sheet.
-- [ ] Generated teams match the captain's expected selection, or every difference is explained and signed off by the captain.
-- [ ] The beta launch checklist is merged with a named invite list and a feedback channel.
-
-**How to test:** rehearsal with the captain on the real fixture: run the full loop on a phone, compare output side by side, and confirm each checklist step works.
+- [ ] Verified rankings and fixtures are visible in production for admins.
+- [ ] One real week runs end to end without using the Google Sheet as the live workflow.
+- [ ] Generated teams and reserves match the captain's expected selection, or every difference is signed off.
+- [ ] Every beta launch checklist gate has a named owner and evidence.
 
 ## Suggested parallel plan
 
@@ -476,7 +515,7 @@ Then follow the dependency order:
 - T05 needs T03 plus T04. T06 needs T05.
 - T08 needs T05 plus T07.
 - T09 needs T03. T10 needs T04 plus T09.
-- T13 needs everything.
+- T13A can run after the core workflow; T13B waits for verified club data and captain rehearsal.
 
 Lewis lane: T01 -> T04 -> T05 -> T08 -> T10
 Daniel lane: T02 -> T03 -> T07 -> T09 -> T06 -> T11
