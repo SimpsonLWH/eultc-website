@@ -23,4 +23,3 @@ export function playersEligibleForTeam<T extends { rankingPosition: number }>(
     eligibleTeams(player.rankingPosition).includes(teamNumber)
   );
 }
-
