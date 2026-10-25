@@ -10,7 +10,11 @@ import {
   parseRankingRows,
   type PreviewFixture,
 } from "../lib/bucs-organiser/parse";
-import { assertPreviewDatabaseName } from "../lib/bucs-organiser/preview-policy";
+import {
+  assertPreviewDatabaseName,
+  PREVIEW_TARGET_MATCHWEEK,
+  previewFixtureStatus,
+} from "../lib/bucs-organiser/preview-policy";
 import { connectToDatabase } from "../lib/db/connection";
 import type { FixtureInput } from "../lib/db/fixtures";
 import { londonWallTimeToUtc } from "../lib/fixtures/datetime";
@@ -26,7 +30,7 @@ import {
   rotateRegistrationInvite,
 } from "../lib/membership/store";
 
-const TARGET_MATCHWEEK = 6;
+const TARGET_MATCHWEEK = PREVIEW_TARGET_MATCHWEEK;
 const PREVIEW_KICKOFF = "13:00";
 const PREVIEW_DEADLINE = "20:00";
 const PREVIEW_HOME_VENUE = "Preview home venue";
@@ -73,12 +77,10 @@ function buildFixtures(fixtures: PreviewFixture[]): PreviewSeedFixture[] {
       );
     }
 
-    const status: FixtureInput["status"] =
-      fixture.matchWeek < TARGET_MATCHWEEK
-        ? "closed"
-        : fixture.matchWeek === TARGET_MATCHWEEK
-          ? "open"
-          : "draft";
+    const status: FixtureInput["status"] = previewFixtureStatus(
+      fixture.matchWeek,
+      TARGET_MATCHWEEK
+    );
 
     return {
       ...fixture,

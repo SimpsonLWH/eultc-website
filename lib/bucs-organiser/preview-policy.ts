@@ -15,3 +15,24 @@ export function assertPreviewDatabaseName(name: string): void {
     );
   }
 }
+export const PREVIEW_TARGET_MATCHWEEK = 6;
+
+export type PreviewFixtureStatus = "draft" | "open" | "closed";
+
+
+export function resolveTargetMatchweekStatus(
+  matchWeek: number,
+  targetMatchweek = PREVIEW_TARGET_MATCHWEEK
+): PreviewFixtureStatus {
+  if (matchWeek === targetMatchweek) {
+    return "open";
+  }
+  return matchWeek < targetMatchweek - 1 ? "closed" : "draft";
+}
+
+export function previewFixtureStatus(
+  matchWeek: number,
+  targetMatchweek = PREVIEW_TARGET_MATCHWEEK
+): PreviewFixtureStatus {
+  return resolveTargetMatchweekStatus(matchWeek, targetMatchweek);
+}

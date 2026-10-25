@@ -21,18 +21,23 @@ The organiser workbook can populate a disposable database for UI testing
 without changing production or committing player identities.
 
 ```bash
-# MONGODB_URI must point to a database whose name contains "preview".
-MONGODB_URI="mongodb://localhost:27017/eultc_preview" \
-  npm run db:seed:bucs-preview -- \
+EULTC_DATA_MODE=preview \
+MONGODB_PREVIEW_URI="mongodb://localhost:27017/eultc_preview" \
+npm run db:seed:bucs-preview -- \
   --file "/path/to/BUCS Team Organiser 26-27.xlsx" \
   --apply
+
+EULTC_DATA_MODE=preview \
+MONGODB_PREVIEW_URI="mongodb://localhost:27017/eultc_preview" \
+npm run dev
 ```
 
 The command is a dry run unless `--apply` is present. It refuses production
-database names, skips unresolved cup ties, and uses synthetic times, venues,
-emails and availability answers. The source workbook remains outside the
-repository; see [docs/beta-launch-checklist.md](docs/beta-launch-checklist.md)
-for the non-preview launch gates.
+and non-preview database names, skips unresolved cup ties, and uses synthetic
+times, venues, emails and availability answers. The source workbook remains
+outside the repository; see
+[docs/beta-launch-checklist.md](docs/beta-launch-checklist.md) for the
+non-preview launch gates.
 
 ## Planning
 

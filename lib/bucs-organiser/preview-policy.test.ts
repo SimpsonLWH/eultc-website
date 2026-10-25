@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { assertPreviewDatabaseName } from "./preview-policy";
+import {
+  assertPreviewDatabaseName,
+  previewFixtureStatus,
+  resolveTargetMatchweekStatus,
+} from "./preview-policy";
 
 describe("assertPreviewDatabaseName", () => {
   it.each(["eultc_preview", "eultc-preview-2026", "PREVIEW"])(
@@ -25,4 +29,17 @@ describe("assertPreviewDatabaseName", () => {
       expect(() => assertPreviewDatabaseName(name)).toThrow(/production/i);
     }
   );
+});
+
+describe("previewFixtureStatus", () => {
+  it("closes historical preview weeks", () => {
+    expect(previewFixtureStatus(1)).toBe("closed");
+    expect(previewFixtureStatus(4)).toBe("closed");
+  });
+
+  it("opens only the target matchweek", () => {
+    expect(resolveTargetMatchweekStatus(5)).toBe("draft");
+    expect(resolveTargetMatchweekStatus(6)).toBe("open");
+    expect(resolveTargetMatchweekStatus(7)).toBe("draft");
+  });
 });
