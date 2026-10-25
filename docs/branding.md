@@ -22,6 +22,13 @@ accent colour.
 | `app/icon.png` | favicon (hairline light ring so it reads on dark browser chrome) |
 | `app/apple-icon.png` | 180px apple-touch icon on white (iOS needs opaque) |
 
+## Typography
+
+Schibsted Grotesk is loaded through `next/font` and used across the clubhouse.
+The landing page uses its 800 weight for display headings and 400/600 for body
+and controls. This gives the public club story a clearer editorial voice than
+the previous system-font fallback while keeping one family across the site.
+
 ## Glass chrome
 
 `.material-nav` is the only glass surface and it is used by the floating header
@@ -30,6 +37,25 @@ where `backdrop-filter` is supported, opaque at rest and for reduced
 transparency, higher contrast and forced colours. A faint court-green wash
 (`.shell-wash`) gives the glass something to sample; content surfaces stay
 opaque.
+
+The anonymous landing page is the exception. Its full-bleed header is opaque
+cream, the page wash is removed, and the public sections use hard colour fields,
+square photography and flat controls. These overrides are scoped to
+`body:has(.club-landing)` so member routes keep the established application
+chrome.
+
+## Club photography
+
+The landing page uses photographs published in EULTC's public ClubSpark gallery:
+
+- `public/club/bucs-champions.jpg` - National Trophy champions, 2026.
+- `public/club/court-action.jpg` - EULTC players on court.
+- `public/club/net-post.jpg` - tennis ball on the net post.
+- `public/club/meadows-courts.jpg` - the Meadows courts at sunset.
+
+The gallery is linked beside the photo credit on the landing page. Replace the
+files with newer club-owned photography when available, keeping the same
+descriptive filenames so the page and credit stay aligned.
 
 ## Shape and corners
 
