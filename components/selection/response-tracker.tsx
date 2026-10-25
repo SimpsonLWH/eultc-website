@@ -40,7 +40,7 @@ export default function ResponseTracker({
           {unavailable}, no response {noResponse}
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          {responded + noResponse} active players counted
+          {responded + noResponse} players eligible for this team
         </p>
       </Card>
 
@@ -53,7 +53,7 @@ export default function ResponseTracker({
         </h2>
         {respondedPlayers.length === 0 ? (
           <p className="rounded-md border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600">
-            No active players have responded yet.
+            No eligible players have responded yet.
           </p>
         ) : (
           <>
@@ -140,7 +140,7 @@ export default function ResponseTracker({
         </h2>
         {noResponsePlayers.length === 0 ? (
           <p className="rounded-md border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600">
-            Every active player has responded.
+            Every eligible player has responded.
           </p>
         ) : (
           <>

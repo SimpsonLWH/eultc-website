@@ -17,8 +17,9 @@ export function resolveDatabaseUri(
   environment: DatabaseEnvironment = process.env
 ): string | null {
   const previewUri = environment.MONGODB_PREVIEW_URI?.trim();
-  if (environment.EULTC_DATA_MODE === "preview" && previewUri) {
-    return previewUri;
+  if (environment.EULTC_DATA_MODE === "preview") {
+    // Preview mode must never fall through to the normal database URI.
+    return previewUri || null;
   }
   return environment.MONGODB_URI?.trim() || null;
 }

@@ -22,13 +22,13 @@ describe("resolveDatabaseUri", () => {
     ).toBe("mongodb://normal/example");
   });
 
-  it("falls back to MONGODB_URI in preview mode without a preview URI", () => {
+  it("fails closed in preview mode without a dedicated preview URI", () => {
     expect(
       resolveDatabaseUri({
         EULTC_DATA_MODE: "preview",
         MONGODB_URI: "mongodb://normal/example",
       })
-    ).toBe("mongodb://normal/example");
+    ).toBeNull();
   });
 
   it("returns null when no database URI is configured", () => {

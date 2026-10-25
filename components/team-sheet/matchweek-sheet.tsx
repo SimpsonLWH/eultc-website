@@ -50,14 +50,29 @@ export default function MatchweekSheet({
   const teamLabels = matchweek.fixtures
     .map((fixture) => formatTeamLabel(fixture.gender, fixture.teamNumber))
     .join(" · ");
+  const fixtureByTeamNumber = new Map(
+    matchweek.fixtures.map((fixture) => [fixture.teamNumber, fixture])
+  );
   const currentUserSlot = findCurrentUserSlot(
     result.teams,
-    matchweek.fixtures,
+    fixtureByTeamNumber,
     currentPlayerId
   );
   const incompleteTeams = result.teams.filter(
     (team) => team.slots.some((slot) => slot.playerId === null)
   );
+  const incompleteTeamMessages = incompleteTeams.flatMap((team) => {
+    const fixture = fixtureByTeamNumber.get(team.teamNumber);
+    if (!fixture) {
+      return [];
+    }
+    const unfilled = team.slots.filter(
+      (slot) => slot.playerId === null
+    ).length;
+    return [
+      `${formatTeamLabel(fixture.gender, fixture.teamNumber)} has ${unfilled} unfilled ${unfilled === 1 ? "slot" : "slots"}`,
+    ];
+  });
 
   return (
     <div className="space-y-7">
@@ -93,15 +108,7 @@ export default function MatchweekSheet({
           className="rounded-surface squircle border border-club-300 bg-club-100 p-4"
         >
           <p className="text-sm font-semibold text-club-950">
-            {incompleteTeams
-              .map((team) => {
-                const fixture = matchweek.fixtures[team.teamNumber - 1];
-                const unfilled = team.slots.filter(
-                  (slot) => slot.playerId === null
-                ).length;
-                return `${formatTeamLabel(fixture.gender, fixture.teamNumber)} has ${unfilled} unfilled ${unfilled === 1 ? "slot" : "slots"}`;
-              })
-              .join(" · ")}{" "}
+            {incompleteTeamMessages.join(" · ")}{" "}
             · {availablePlayerCount} available for {capacity} team slots
           </p>
           <Link
@@ -126,7 +133,10 @@ export default function MatchweekSheet({
       ) : (
         <div className="grid items-start gap-5 lg:grid-cols-2">
           {result.teams.map((team) => {
-            const fixture = matchweek.fixtures[team.teamNumber - 1];
+            const fixture = fixtureByTeamNumber.get(team.teamNumber);
+            if (!fixture) {
+              return null;
+            }
             const isFocus =
               focusFixtureId !== null &&
               String(fixture._id) === focusFixtureId;
@@ -208,7 +218,7 @@ export default function MatchweekSheet({
 
 function findCurrentUserSlot(
   teams: SelectionTeam[],
-  fixtures: FixtureWithId[],
+  fixtures: ReadonlyMap<number, FixtureWithId>,
   currentPlayerId: string | null
 ): { teamLabel: string; seed: number } | null {
   if (currentPlayerId === null) {
@@ -220,7 +230,10 @@ function findCurrentUserSlot(
       (candidate) => candidate.playerId === currentPlayerId
     );
     if (slot && slot.playerId !== null) {
-      const fixture = fixtures[team.teamNumber - 1];
+      const fixture = fixtures.get(team.teamNumber);
+      if (!fixture) {
+        return null;
+      }
       return {
         teamLabel: formatTeamLabel(fixture.gender, fixture.teamNumber),
         seed: slot.seed,

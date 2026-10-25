@@ -325,6 +325,9 @@ describe("buildMatchweekSelection", () => {
       ["player-9", "player-10", "player-11", "player-12"],
       ["player-17", "player-18", "player-19", "player-20"],
     ]);
+    expect(selection.result.teams.map((team) => team.teamNumber)).toEqual([
+      1, 3, 5,
+    ]);
   });
 
   it("adds the four highest-ranked remaining available players as reserves", () => {

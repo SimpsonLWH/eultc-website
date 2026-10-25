@@ -171,7 +171,7 @@ export function buildMatchweekSelection<
 
   const selectedPlayerIds = new Set<string>();
   const teams: SelectionTeam[] = input.matchweek.fixtures.map(
-    (fixture, fixtureIndex) => {
+    (fixture) => {
       const availableForFixture = statusByFixture.get(String(fixture._id));
       const eligible = sortedPlayers
         .filter(
@@ -193,7 +193,7 @@ export function buildMatchweekSelection<
           };
         }
       );
-      return { teamNumber: fixtureIndex + 1, slots };
+      return { teamNumber: fixture.teamNumber, slots };
     }
   );
 
