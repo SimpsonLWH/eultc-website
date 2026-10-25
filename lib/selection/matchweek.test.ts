@@ -6,9 +6,11 @@ import {
   buildMatchweekSelection,
   groupFixturesIntoMatchweeks,
   resolveDisplayMatchweek,
+  type Matchweek,
   type MatchweekFixture,
+  type MatchweekResponse,
 } from "./matchweek";
-import type { SelectionPlayer, SelectionResponse } from "./build-selection";
+import type { SelectionPlayer } from "./build-selection";
 
 // Factories keep individual tests focused on the matchweek rule under test.
 function makeFixture(
@@ -16,8 +18,9 @@ function makeFixture(
   teamNumber: number,
   date: Date,
   overrides: Partial<MatchweekFixture> = {}
-): MatchweekFixture {
+): MatchweekFixture & { _id: string } {
   return {
+    _id: `fixture-${gender}-${teamNumber}`,
     gender,
     teamNumber,
     date,
@@ -43,8 +46,20 @@ function makePlayers(count: number): SelectionPlayer[] {
   return Array.from({ length: count }, (_, index) => makePlayer(index + 1));
 }
 
-function available(playerId: string): SelectionResponse {
-  return { playerId, status: "available" };
+function available(
+  playerId: string,
+  fixtureId = "fixture-male-1"
+): MatchweekResponse {
+  return { playerId, fixtureId, status: "available" };
+}
+
+function allAvailable(
+  players: SelectionPlayer[],
+  matchweek: Matchweek<MatchweekFixture & { _id: string }>
+): MatchweekResponse[] {
+  return matchweek.fixtures.flatMap((fixture) =>
+    players.map((player) => available(player.id, fixture._id))
+  );
 }
 
 const WEDNESDAY = new Date("2026-11-04T14:00:00.000Z");
@@ -118,7 +133,7 @@ describe("buildMatchweekSelection", () => {
     const selection = buildMatchweekSelection({
       matchweek,
       players,
-      responses: players.map((player) => available(player.id)),
+      responses: allAvailable(players, matchweek),
     });
 
     expect(selection.result.teams).toHaveLength(2);
@@ -151,7 +166,7 @@ describe("buildMatchweekSelection", () => {
     const selection = buildMatchweekSelection({
       matchweek,
       players,
-      responses: players.map((player) => available(player.id)),
+      responses: allAvailable(players, matchweek),
     });
 
     expect(selection.result.teams[1].slots.map((slot) => slot.playerId)).toEqual([
@@ -187,7 +202,7 @@ describe("buildMatchweekSelection", () => {
     expect(selection.respondedPlayerCount).toBe(0);
   });
 
-  it("counts a player once when they answered multiple fixtures, available wins", () => {
+  it("deduplicates conflicting answers for one fixture, available wins", () => {
     const matchweek = groupFixturesIntoMatchweeks([
       makeFixture("male", 2, WEDNESDAY),
       makeFixture("male", 1, WEDNESDAY),
@@ -198,9 +213,13 @@ describe("buildMatchweekSelection", () => {
       matchweek,
       players,
       responses: [
-        available("player-1"),
-        { playerId: "player-1", status: "unavailable" },
-        available("player-2"),
+        available("player-1", "fixture-male-1"),
+        {
+          playerId: "player-1",
+          fixtureId: "fixture-male-1",
+          status: "unavailable",
+        },
+        available("player-2", "fixture-male-1"),
       ],
     });
 
@@ -209,6 +228,154 @@ describe("buildMatchweekSelection", () => {
     expect(
       selection.result.teams[0].slots.map((slot) => slot.playerId)
     ).toEqual(["player-1", "player-2", null, null]);
+  });
+
+  it("does not carry availability from one fixture into another", () => {
+    const matchweek = groupFixturesIntoMatchweeks([
+      makeFixture("male", 2, WEDNESDAY),
+      makeFixture("male", 1, WEDNESDAY),
+    ])[0];
+    const players = makePlayers(9);
+
+    const selection = buildMatchweekSelection({
+      matchweek,
+      players,
+      responses: [
+        ...[1, 2, 3, 4, 5].map((rank) =>
+          available(`player-${rank}`, "fixture-male-1")
+        ),
+        ...[6, 7, 8, 9].map((rank) =>
+          available(`player-${rank}`, "fixture-male-2")
+        ),
+      ],
+    });
+
+    expect(selection.result.teams[0].slots.map((slot) => slot.playerId)).toEqual([
+      "player-1",
+      "player-2",
+      "player-3",
+      "player-4",
+    ]);
+    expect(selection.result.teams[1].slots.map((slot) => slot.playerId)).toEqual([
+      "player-6",
+      "player-7",
+      "player-8",
+      "player-9",
+    ]);
+    expect(selection.reserves).toEqual([
+      { position: 1, playerId: "player-5" },
+      { position: 2, playerId: null },
+      { position: 3, playerId: null },
+      { position: 4, playerId: null },
+    ]);
+  });
+
+  it("excludes a player whose rank is not eligible for that team", () => {
+    const matchweek = groupFixturesIntoMatchweeks([
+      makeFixture("male", 5, WEDNESDAY),
+    ])[0];
+    const players = [makePlayer(1), ...makePlayers(20).slice(16)];
+
+    const selection = buildMatchweekSelection({
+      matchweek,
+      players,
+      responses: players.map((player) =>
+        available(player.id, "fixture-male-5")
+      ),
+    });
+
+    expect(selection.result.teams[0].slots.map((slot) => slot.playerId)).toEqual([
+      "player-17",
+      "player-18",
+      "player-19",
+      "player-20",
+    ]);
+  });
+
+  it("maps non-contiguous team numbers in fixture order", () => {
+    const matchweek = groupFixturesIntoMatchweeks([
+      makeFixture("male", 5, WEDNESDAY),
+      makeFixture("male", 1, WEDNESDAY),
+      makeFixture("male", 3, WEDNESDAY),
+    ])[0];
+    const players = makePlayers(20);
+
+    const selection = buildMatchweekSelection({
+      matchweek,
+      players,
+      responses: [
+        ...[1, 2, 3, 4].map((rank) =>
+          available(`player-${rank}`, "fixture-male-1")
+        ),
+        ...[9, 10, 11, 12].map((rank) =>
+          available(`player-${rank}`, "fixture-male-3")
+        ),
+        ...[17, 18, 19, 20].map((rank) =>
+          available(`player-${rank}`, "fixture-male-5")
+        ),
+      ],
+    });
+
+    expect(
+      selection.result.teams.map((team) =>
+        team.slots.map((slot) => slot.playerId)
+      )
+    ).toEqual([
+      ["player-1", "player-2", "player-3", "player-4"],
+      ["player-9", "player-10", "player-11", "player-12"],
+      ["player-17", "player-18", "player-19", "player-20"],
+    ]);
+  });
+
+  it("adds the four highest-ranked remaining available players as reserves", () => {
+    const date = new Date("2026-11-04T14:00:00.000Z");
+    const matchweek = groupFixturesIntoMatchweeks(
+      [1, 2, 3, 4, 5].map((teamNumber) =>
+        makeFixture("male", teamNumber, date)
+      )
+    )[0];
+    const players = makePlayers(25);
+
+    const selection = buildMatchweekSelection({
+      matchweek,
+      players,
+      responses: allAvailable(players, matchweek),
+    });
+
+    expect(selection.reserves).toEqual([
+      { position: 1, playerId: "player-21" },
+      { position: 2, playerId: "player-22" },
+      { position: 3, playerId: "player-23" },
+      { position: 4, playerId: "player-24" },
+    ]);
+    const selectedIds = selection.result.teams.flatMap((team) =>
+      team.slots.flatMap((slot) => (slot.playerId ? [slot.playerId] : []))
+    );
+    expect(new Set(selectedIds).size).toBe(selectedIds.length);
+    expect(selectedIds).not.toContain("player-21");
+  });
+
+  it("is deterministic when fixtures, players and responses arrive shuffled", () => {
+    const date = new Date("2026-11-04T14:00:00.000Z");
+    const fixtures = [
+      makeFixture("male", 2, date),
+      makeFixture("male", 1, date),
+    ];
+    const players = makePlayers(10);
+    const preparedMatchweek = groupFixturesIntoMatchweeks(fixtures)[0];
+    const baseline = buildMatchweekSelection({
+      matchweek: preparedMatchweek,
+      players,
+      responses: allAvailable(players, preparedMatchweek),
+    });
+
+    const shuffled = buildMatchweekSelection({
+      matchweek: groupFixturesIntoMatchweeks([...fixtures].reverse())[0],
+      players: [...players].reverse(),
+      responses: allAvailable(players, preparedMatchweek).reverse(),
+    });
+
+    expect(shuffled).toEqual(baseline);
   });
 });
 
