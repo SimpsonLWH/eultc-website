@@ -441,7 +441,7 @@ the week. The sheet also requires four reserves. See T13A.
 **How to test:** rm -rf node_modules && npm ci on the chosen Node version, then npm run lint and npm run build.
 
 ### T13A - Preview organiser data, matchweek QA and beta launch docs
-- Status: In progress
+- Status: Done
 - Owner: Lewis
 - Type: chore
 - Size: M
@@ -464,12 +464,12 @@ without claiming factual or launch readiness.
 **Out of scope:** Production seeding, real member emails or UUNs, factual fixture claims, inviting players, mass communication, or closing the real beta launch.
 
 **Acceptance criteria:**
-- [ ] The preview seed defaults to dry-run and refuses production databases.
-- [ ] The workbook provides 39 ranked names and 33 importable fixtures; two cup ties are reported as skipped.
-- [ ] Matchweek 6 renders five teams and four reserves from deliberately synthetic availability data.
-- [ ] Availability for one fixture cannot place a player into another fixture, and rank eligibility is enforced.
-- [ ] The beta launch checklist is merged as a draft with unresolved launch blockers, fallback and sign-off.
-- [ ] Preview data is not written to production and no source identities are committed.
+- [x] The preview seed defaults to dry-run and refuses production databases.
+- [x] The workbook provides 39 ranked names and 33 importable fixtures; two cup ties are reported as skipped.
+- [x] Matchweek 6 renders five teams and four reserves from deliberately synthetic availability data.
+- [x] Availability for one fixture cannot place a player into another fixture, and rank eligibility is enforced.
+- [x] The beta launch checklist is merged as a draft with unresolved launch blockers, fallback and sign-off.
+- [x] Preview data is not written to production and no source identities are committed.
 
 **How to test:** run the dry-run import, apply it to a database whose name contains `preview`, sign in with the preview accounts, and verify rankings, fixtures, response tracker, Matchweek 6 teams and reserves at desktop and mobile widths.
 
