@@ -27,7 +27,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       "*.css": {
-        // Compile Tailwind v4 through its Turbopack loader.
+        // Compile Tailwind v4 without treating CSS Modules as global CSS.
+        condition: { not: { path: /\.module\.css$/ } },
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

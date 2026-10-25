@@ -24,9 +24,10 @@ export async function SessionHeader() {
     return (
       <Link
         href="/sign-in"
-        className="inline-flex min-h-10 items-center rounded-control squircle bg-club-700 px-4 text-sm font-semibold text-white hover:bg-club-800"
+        className="inline-flex min-h-10 items-center rounded-control squircle bg-club-700 px-4 text-lg font-semibold text-white hover:bg-club-800"
       >
-        Sign in
+        <span className="sm:hidden">Members</span>
+        <span className="hidden sm:inline">Member sign in</span>
       </Link>
     );
   }
